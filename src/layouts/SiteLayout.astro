@@ -1,5 +1,6 @@
 ---
 import Analytics from "@vercel/analytics/astro";
+import SpeedInsights from "@vercel/speed-insights/astro";
 import { SITE_INDEXING_ENABLED } from "astro:env/server";
 
 import SiteFooter from "../components/SiteFooter.astro";
@@ -44,6 +45,7 @@ const canonicalUrl = new URL(canonicalPath, Astro.site);
     <meta property="og:locale" content="zh_CN" />
     <title>{pageTitle}</title>
     <Analytics />
+    <SpeedInsights />
   </head>
   <body>
     <a class="skip-link" href="#main-content">跳到正文</a>
