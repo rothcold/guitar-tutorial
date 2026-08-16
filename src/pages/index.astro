@@ -1,0 +1,30 @@
+---
+import { getCollection } from "astro:content";
+
+const lessons = (await getCollection("lessons")).sort(
+  (left, right) => left.data.order - right.data.order,
+);
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>吉他从入门到精通</title>
+  </head>
+  <body>
+    <main>
+      <h1>吉他从入门到精通</h1>
+      <ol>
+        {
+          lessons.map((lesson) => (
+            <li>
+              <a href={`/lessons/${lesson.data.slug}`}>{lesson.data.title}</a>
+            </li>
+          ))
+        }
+      </ol>
+    </main>
+  </body>
+</html>

@@ -6,6 +6,17 @@
 
 教程源文件位于 [`docs/`](docs/)。面向维护者的项目约定见 [`AGENTS.md`](AGENTS.md)。
 
+## 本地网站
+
+网站使用 Astro 构建，需要 Node.js 22.12.0 或更高版本和 npm。
+
+```text
+npm install
+npm run dev
+```
+
+提交前运行 `npm run check` 和 `npm run build`。
+
 ## 阅读顺序
 
 | 阶段 | 教程 | 结果 |

@@ -9,6 +9,19 @@
 - `docs/` 下的 Markdown 是教程内容源，后续前端网站从这些文件构建。
 - 每一篇必须保存在 `docs/` 下的独立 Markdown 文件中。
 
+## 网站架构
+
+- 网站使用 Astro 7、TypeScript、npm 和 Astro 内置的 GitHub Flavored Markdown 支持，输出纯静态页面。
+- Node.js 必须为 22.12.0 或更高版本。
+- 内容集合只在 `src/content.config.ts` 定义，`lessons` 集合通过 `glob()` 直接读取 `docs/*.md`。
+- `lessonSchema` 是教程 frontmatter 的单一契约；TypeScript 类型必须从该 Schema 推导，不得另写平行接口。
+- 教程 ID 保留 `01`、`08A`、`08B` 等字符串格式；公开 slug 使用 `01`、`08a`、`08b` 等小写无尾斜杠格式。
+- `track` 只使用 `common`、`acoustic`、`electric`；`previous` 和 `next` 使用内容集合引用描述分流图。
+- `07` 的下一篇为 `08A` 与 `08B`，两条路线都汇合到 `09`；`09` 的上一篇为 `08A` 与 `08B`。
+- `src/pages/lessons/[slug].astro` 从 frontmatter 生成静态教程路由，页面视觉和完整导航在后续前端修改中维护。
+- `src/markdown/lesson-links.ts` 在构建时把正文中的相对 `.md` 链接改写为公开教程路由；不要为了网站路由破坏 Obsidian 和 GitHub 可用的源文件链接。
+- 常用命令为 `npm run dev`、`npm run check`、`npm run build` 和 `npm run preview`。
+
 ## 写作约定
 
 - 面向自学者解释术语，先说明听觉或动作结果，再说明理论。
@@ -37,4 +50,6 @@
 - 修改教程结构后，同步更新 `README.md` 中的链接与学习路线。
 - 新增练习时，按练习卡约定提供完整执行信息，不得只写技巧名称与分钟数。
 - 完成修改后，检查 `docs/` 下 15 篇正文均存在、内部链接有效、每篇只有一个一级标题、标题不跳级，并且没有空章节或占位符。
+- 修改教程 frontmatter 或网站代码后，运行 `npm run check` 和 `npm run build`。
+- 新增或重排教程时，同步维护 `id`、`slug`、`order`、`track`、`previous` 和 `next`，确保 ID 与 slug 唯一且导航引用双向一致。
 - 项目发生有意义的结构、命名、写作标准、网站架构或校验方式变化时，必须同步修订本文件。
