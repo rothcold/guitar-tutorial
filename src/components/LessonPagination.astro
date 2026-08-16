@@ -1,0 +1,38 @@
+---
+import type { Lesson } from "../lib/lessons";
+import { getLessonPath } from "../lib/lessons";
+
+interface Props {
+  previousLessons: Lesson[];
+  nextLessons: Lesson[];
+}
+
+const { previousLessons, nextLessons } = Astro.props;
+---
+
+{
+  (previousLessons.length > 0 || nextLessons.length > 0) && (
+    <nav class="lesson-pagination" aria-label="教程前后导航">
+      <div class="lesson-pagination__group">
+        {previousLessons.length > 0 && (
+          <>
+            <p>上一篇</p>
+            {previousLessons.map((lesson) => (
+              <a href={getLessonPath(lesson)}>{lesson.data.title}</a>
+            ))}
+          </>
+        )}
+      </div>
+      <div class="lesson-pagination__group lesson-pagination__group--next">
+        {nextLessons.length > 0 && (
+          <>
+            <p>下一篇</p>
+            {nextLessons.map((lesson) => (
+              <a href={getLessonPath(lesson)}>{lesson.data.title}</a>
+            ))}
+          </>
+        )}
+      </div>
+    </nav>
+  )
+}

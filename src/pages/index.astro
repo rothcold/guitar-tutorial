@@ -1,30 +1,90 @@
 ---
-import { getCollection } from "astro:content";
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { getLessonPath, getOrderedLessons } from "../lib/lessons";
 
-const lessons = (await getCollection("lessons")).sort(
-  (left, right) => left.data.order - right.data.order,
-);
+const lessons = await getOrderedLessons();
+const firstLesson = lessons[0];
+const descriptor = "从零基础到独立演奏、即兴、扒歌、编曲与创作";
+
+const levelGroups = [
+  { level: "1", label: "Level 1" },
+  { level: "2", label: "Level 2" },
+  { level: "3", label: "Level 3" },
+  { level: "4", label: "Level 4" },
+  { level: "5", label: "Level 5 · 分流路线" },
+  { level: "6", label: "Level 6" },
+].map((group) => ({
+  ...group,
+  lessons: lessons.filter((lesson) =>
+    group.level === "5"
+      ? lesson.data.level.startsWith("5")
+      : lesson.data.level === group.level,
+  ),
+}));
 ---
 
-<!doctype html>
-<html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>吉他从入门到精通</title>
-  </head>
-  <body>
-    <main>
-      <h1>吉他从入门到精通</h1>
-      <ol>
+<SiteLayout
+  title="吉他教程"
+  description={descriptor}
+  canonicalPath="/"
+>
+  <main id="main-content" class="home-main">
+    <section class="home-hero">
+      <p class="eyebrow">15 篇中文教程</p>
+      <h1>吉他教程</h1>
+      <p class="home-hero__descriptor">{descriptor}</p>
+      <p class="home-hero__intro">
+        这是一套按学习路径编排的中文吉他教程。前七篇建立木吉他与电吉他共通能力，第八篇按乐器和目标分流，之后重新汇合到高级乐理、即兴、听力、创作和完整音乐能力。
+      </p>
+      {
+        firstLesson && (
+          <a class="primary-link" href={getLessonPath(firstLesson)}>从第一篇开始</a>
+        )
+      }
+    </section>
+
+    <section class="home-section" aria-labelledby="course-heading">
+      <div class="home-section__heading">
+        <p class="eyebrow">学习路线</p>
+        <h2 id="course-heading">阅读顺序</h2>
+        <p>
+          建议按顺序学习，但篇末完成标准只用于自我检查，不是阅读下一篇的硬性门槛。完成第七篇后选择 A 或 B 路线，也可以先主修一条，再补另一条。
+        </p>
+      </div>
+
+      <div class="level-groups">
         {
-          lessons.map((lesson) => (
-            <li>
-              <a href={`/lessons/${lesson.data.slug}`}>{lesson.data.title}</a>
-            </li>
+          levelGroups.map((group) => (
+            <section class="level-group">
+              <h3>{group.label}</h3>
+              <ol>
+                {group.lessons.map((lesson) => (
+                  <li>
+                    <a href={getLessonPath(lesson)}>
+                      <span>{lesson.data.title}</span>
+                      <small>{lesson.data.description}</small>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </section>
           ))
         }
+      </div>
+    </section>
+
+    <section class="home-section home-guide" aria-labelledby="guide-heading">
+      <div class="home-section__heading">
+        <p class="eyebrow">练习方法</p>
+        <h2 id="guide-heading">如何使用</h2>
+      </div>
+      <ol>
+        <li>先选择 25、45 或 90 分钟档，再按篇内的训练日顺序推进。</li>
+        <li>每次练习先调音，演奏和节奏任务使用篇内指定的节拍器速度。</li>
+        <li>每周至少保留一次短录音、谱例、分析表或工程版本。</li>
+        <li>篇末完成标准用于判断当前状态，可以边阅读下一篇，边重复需要巩固的训练日。</li>
+        <li>练习周期可以按掌握速度缩短或延长，遇到动作疼痛时先停止练习。</li>
       </ol>
-    </main>
-  </body>
-</html>
+    </section>
+  </main>
+</SiteLayout>

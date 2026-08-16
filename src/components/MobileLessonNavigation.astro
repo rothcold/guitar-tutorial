@@ -1,0 +1,66 @@
+---
+import type { MarkdownHeading } from "astro";
+
+import type { Lesson } from "../lib/lessons";
+import CourseNavigation from "./CourseNavigation.astro";
+import PageTableOfContents from "./PageTableOfContents.astro";
+
+interface Props {
+  lessons: Lesson[];
+  currentId: string;
+  headings: MarkdownHeading[];
+}
+
+const { lessons, currentId, headings } = Astro.props;
+---
+
+<nav class="mobile-lesson-navigation" aria-label="移动端教程导航" data-mobile-nav>
+  <details>
+    <summary>课程</summary>
+    <div class="mobile-drawer mobile-drawer--left">
+      <p class="sidebar-title" id="mobile-course-title">课程路径</p>
+      <CourseNavigation
+        lessons={lessons}
+        currentId={currentId}
+        labelledBy="mobile-course-title"
+      />
+    </div>
+  </details>
+  <details>
+    <summary>本页</summary>
+    <div class="mobile-drawer mobile-drawer--right">
+      <p class="sidebar-title" id="mobile-toc-title">本页目录</p>
+      <PageTableOfContents headings={headings} labelledBy="mobile-toc-title" />
+    </div>
+  </details>
+</nav>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-mobile-nav]").forEach((nav) => {
+    const drawers = Array.from(nav.querySelectorAll("details"));
+
+    drawers.forEach((drawer) => {
+      drawer.addEventListener("toggle", () => {
+        if (!drawer.open) return;
+
+        drawers.forEach((otherDrawer) => {
+          if (otherDrawer !== drawer) otherDrawer.open = false;
+        });
+      });
+
+      drawer.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          drawer.open = false;
+        });
+      });
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        drawers.forEach((drawer) => {
+          drawer.open = false;
+        });
+      }
+    });
+  });
+</script>
