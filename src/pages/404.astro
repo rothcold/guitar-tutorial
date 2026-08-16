@@ -1,0 +1,18 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+Astro.response.status = 404;
+---
+
+<SiteLayout
+  title="页面未找到"
+  description="请求的吉他教程页面不存在"
+  canonicalPath="/404"
+>
+  <main id="main-content" class="not-found-page">
+    <p class="eyebrow">404</p>
+    <h1>这里没有这一页</h1>
+    <p>链接可能已经变更，也可能输入有误。可以回到课程首页重新选择教程。</p>
+    <a class="primary-link" href="/">返回课程首页</a>
+  </main>
+</SiteLayout>

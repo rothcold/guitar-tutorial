@@ -1,0 +1,42 @@
+---
+import type { Lesson } from "../lib/lessons";
+import { getLessonPath } from "../lib/lessons";
+
+interface Props {
+  lessons: Lesson[];
+  currentId?: string;
+  labelledBy?: string;
+}
+
+const { lessons, currentId, labelledBy } = Astro.props;
+
+const trackLabels = {
+  common: "共通路线",
+  acoustic: "木吉他路线",
+  electric: "电吉他路线",
+} as const;
+---
+
+<nav class="course-navigation" aria-labelledby={labelledBy}>
+  <ol class="course-list">
+    {
+      lessons.map((lesson) => (
+        <li>
+          <a
+            class:list={["course-link", { "is-current": lesson.id === currentId }]}
+            href={getLessonPath(lesson)}
+            aria-current={lesson.id === currentId ? "page" : undefined}
+          >
+            <span class="course-link__id">{lesson.data.id}</span>
+            <span class="course-link__body">
+              <span class="course-link__title">{lesson.data.title}</span>
+              <span class="course-link__meta">
+                Level {lesson.data.level} · {trackLabels[lesson.data.track]}
+              </span>
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ol>
+</nav>

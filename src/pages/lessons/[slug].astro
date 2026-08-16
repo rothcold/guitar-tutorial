@@ -1,9 +1,18 @@
 ---
-import type { CollectionEntry } from "astro:content";
-import { getCollection, render } from "astro:content";
+import CourseNavigation from "../../components/CourseNavigation.astro";
+import LessonPagination from "../../components/LessonPagination.astro";
+import MobileLessonNavigation from "../../components/MobileLessonNavigation.astro";
+import PageTableOfContents from "../../components/PageTableOfContents.astro";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import {
+  getOrderedLessons,
+  resolveLessonReferences,
+  type Lesson,
+} from "../../lib/lessons";
+import { render } from "astro:content";
 
 export async function getStaticPaths() {
-  const lessons = await getCollection("lessons");
+  const lessons = await getOrderedLessons();
 
   return lessons.map((lesson) => ({
     params: { slug: lesson.data.slug },
@@ -12,24 +21,68 @@ export async function getStaticPaths() {
 }
 
 interface Props {
-  lesson: CollectionEntry<"lessons">;
+  lesson: Lesson;
 }
 
-const { lesson } = Astro.props;
-const { Content } = await render(lesson);
+const { lesson } = Astro.props as Props;
+const lessons = await getOrderedLessons();
+const lessonsById = new Map(lessons.map((entry) => [entry.id, entry]));
+const previousLessons = resolveLessonReferences(
+  lesson.data.previous,
+  lessonsById,
+);
+const nextLessons = resolveLessonReferences(lesson.data.next, lessonsById);
+const { Content, headings } = await render(lesson);
+
+const trackLabels = {
+  common: "木吉他与电吉他共通路线",
+  acoustic: "木吉他路线",
+  electric: "电吉他路线",
+} as const;
 ---
 
-<!doctype html>
-<html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{lesson.data.title}</title>
-  </head>
-  <body>
-    <main>
-      <a href="/">返回课程目录</a>
-      <Content />
+<SiteLayout
+  title={lesson.data.title}
+  description={lesson.data.description}
+  canonicalPath={`/lessons/${lesson.data.slug}`}
+  type="article"
+>
+  <MobileLessonNavigation
+    lessons={lessons}
+    currentId={lesson.id}
+    headings={headings}
+  />
+
+  <div class="reading-layout">
+    <aside class="desktop-sidebar desktop-sidebar--course">
+      <p class="sidebar-title" id="desktop-course-title">课程路径</p>
+      <CourseNavigation
+        lessons={lessons}
+        currentId={lesson.id}
+        labelledBy="desktop-course-title"
+      />
+    </aside>
+
+    <main id="main-content" class="lesson-main">
+      <div class="lesson-context">
+        <a href="/">课程首页</a>
+        <span aria-hidden="true">/</span>
+        <span>Level {lesson.data.level}</span>
+        <span aria-hidden="true">/</span>
+        <span>{trackLabels[lesson.data.track]}</span>
+      </div>
+      <article class="prose">
+        <Content />
+      </article>
+      <LessonPagination
+        previousLessons={previousLessons}
+        nextLessons={nextLessons}
+      />
     </main>
-  </body>
-</html>
+
+    <aside class="desktop-sidebar desktop-sidebar--toc">
+      <p class="sidebar-title" id="desktop-toc-title">本页目录</p>
+      <PageTableOfContents headings={headings} labelledBy="desktop-toc-title" />
+    </aside>
+  </div>
+</SiteLayout>

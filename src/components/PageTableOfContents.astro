@@ -1,0 +1,27 @@
+---
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+  headings: MarkdownHeading[];
+  labelledBy?: string;
+}
+
+const { headings, labelledBy } = Astro.props;
+const pageHeadings = headings.filter(({ depth }) => depth >= 2);
+---
+
+<nav class="page-toc" aria-labelledby={labelledBy}>
+  {
+    pageHeadings.length > 0 ? (
+      <ol>
+        {pageHeadings.map((heading) => (
+          <li class={`page-toc__depth-${heading.depth}`}>
+            <a href={`#${heading.slug}`}>{heading.text}</a>
+          </li>
+        ))}
+      </ol>
+    ) : (
+      <p class="page-toc__empty">本页没有小节。</p>
+    )
+  }
+</nav>

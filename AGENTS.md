@@ -18,8 +18,12 @@
 - 教程 ID 保留 `01`、`08A`、`08B` 等字符串格式；公开 slug 使用 `01`、`08a`、`08b` 等小写无尾斜杠格式。
 - `track` 只使用 `common`、`acoustic`、`electric`；`previous` 和 `next` 使用内容集合引用描述分流图。
 - `07` 的下一篇为 `08A` 与 `08B`，两条路线都汇合到 `09`；`09` 的上一篇为 `08A` 与 `08B`。
-- `src/pages/lessons/[slug].astro` 从 frontmatter 生成静态教程路由，页面视觉和完整导航在后续前端修改中维护。
+- `src/pages/lessons/[slug].astro` 从 frontmatter 生成静态教程路由；桌面页面使用课程路径、正文和本页目录三栏布局，移动端使用独立的“课程”与“本页”抽屉。
+- 教程正文的一级标题来自 Markdown，页面布局不得重复输出标题；本页目录只收录正文中的二至四级标题。
+- 网站只使用 `src/styles/global.css` 中的浅色原生 CSS token，不引入 Tailwind 或组件库；宽表格和六线谱必须保留横向滚动。
 - `src/markdown/lesson-links.ts` 在构建时把正文中的相对 `.md` 链接改写为公开教程路由；不要为了网站路由破坏 Obsidian 和 GitHub 可用的源文件链接。
+- 生产 canonical 域名为 `https://guitar.rothcold.me`；PR4 的自动化生产校验与 smoke test 通过前，页面保留 `noindex` 且 `robots.txt` 禁止抓取。
+- Vercel Web Analytics 组件只在共享布局中加载，数据使用说明维护在 `/privacy`。
 - 常用命令为 `npm run dev`、`npm run check`、`npm run build` 和 `npm run preview`。
 
 ## 写作约定
