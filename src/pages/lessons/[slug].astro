@@ -1,0 +1,35 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const lessons = await getCollection("lessons");
+
+  return lessons.map((lesson) => ({
+    params: { slug: lesson.data.slug },
+    props: { lesson },
+  }));
+}
+
+interface Props {
+  lesson: CollectionEntry<"lessons">;
+}
+
+const { lesson } = Astro.props;
+const { Content } = await render(lesson);
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{lesson.data.title}</title>
+  </head>
+  <body>
+    <main>
+      <a href="/">返回课程目录</a>
+      <Content />
+    </main>
+  </body>
+</html>
