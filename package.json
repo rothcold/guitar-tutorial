@@ -10,7 +10,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "check": "astro check",
-    "preview": "astro preview"
+    "lint": "eslint \"src/**/*.{astro,js,mjs,ts}\" \"test/**/*.mjs\" \"eslint.config.js\" \"astro.config.mjs\" --max-warnings 0",
+    "preview": "astro preview",
+    "test": "script/test"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "0.3.5",
@@ -21,6 +23,11 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
-    "typescript": "6.0.3"
+    "@eslint/js": "9.39.5",
+    "eslint": "9.39.5",
+    "eslint-plugin-astro": "1.7.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.67.0",
+    "yaml": "2.9.0"
   }
 }

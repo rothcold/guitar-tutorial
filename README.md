@@ -4,6 +4,8 @@
 
 建议按顺序学习，但篇末完成标准只用于自我检查，不是阅读下一篇的硬性门槛。每篇周期都是估算，掌握较快可以缩短，学习较慢或主动安排休息日可以延长。遇到动作疼痛时先停止练习，检查姿势和用力，不要靠忍耐推进。
 
+在线版本：[guitar.rothcold.me](https://guitar.rothcold.me)
+
 教程源文件位于 [`docs/`](docs/)。面向维护者的项目约定见 [`AGENTS.md`](AGENTS.md)。
 
 ## 本地网站
@@ -11,11 +13,19 @@
 网站使用 Astro 构建，需要 Node.js 22.12.0 或更高版本和 npm。
 
 ```text
-npm install
+script/setup
 npm run dev
 ```
 
-提交前运行 `npm run check` 和 `npm run build`。
+提交前运行 `script/lint` 和 `script/test`。CI 使用 `script/cibuild` 执行同一套校验。
+
+## Vercel 发布
+
+1. 在 Vercel 中导入 GitHub 仓库 `rothcold/guitar-tutorial`，生产分支保持 `main`。这是纯静态 Astro 站点，不需要 Vercel adapter；构建命令为 `npm run build`，输出目录为 `dist`。
+2. 添加 `guitar.rothcold.me` 自定义域名，并按 Vercel 提示在 Cloudflare 完成 DNS 配置。启用项目的 Web Analytics。
+3. 首次生产部署不要设置 `SITE_INDEXING_ENABLED`，或将它设为 `false`。运行 GitHub Actions 中的 `Production smoke`，选择 `disabled`。
+4. 首次 smoke 通过后，在 Vercel 的 Production 环境将 `SITE_INDEXING_ENABLED` 设为 `true` 并重新部署。环境变量只对新部署生效。
+5. 再次运行 `Production smoke` 并选择 `enabled`。本地也可以运行 `script/smoke https://guitar.rothcold.me enabled`。
 
 ## 阅读顺序
 
