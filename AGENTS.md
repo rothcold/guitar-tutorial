@@ -13,6 +13,7 @@
 
 - 网站使用 Astro 7、TypeScript、npm 和 Astro 内置的 GitHub Flavored Markdown 支持，输出纯静态页面。
 - Node.js 必须为 22.12.0 或更高版本。
+- Vercel 通过 GitHub 集成部署 `main`，构建命令为 `npm run build`，输出目录为 `dist`；纯静态构建不安装 `@astrojs/vercel` adapter。
 - 内容集合只在 `src/content.config.ts` 定义，`lessons` 集合通过 `glob()` 直接读取 `docs/*.md`。
 - `lessonSchema` 是教程 frontmatter 的单一契约；TypeScript 类型必须从该 Schema 推导，不得另写平行接口。
 - 教程 ID 保留 `01`、`08A`、`08B` 等字符串格式；公开 slug 使用 `01`、`08a`、`08b` 等小写无尾斜杠格式。
@@ -22,9 +23,11 @@
 - 教程正文的一级标题来自 Markdown，页面布局不得重复输出标题；本页目录只收录正文中的二至四级标题。
 - 网站只使用 `src/styles/global.css` 中的浅色原生 CSS token，不引入 Tailwind 或组件库；宽表格和六线谱必须保留横向滚动。
 - `src/markdown/lesson-links.ts` 在构建时把正文中的相对 `.md` 链接改写为公开教程路由；不要为了网站路由破坏 Obsidian 和 GitHub 可用的源文件链接。
-- 生产 canonical 域名为 `https://guitar.rothcold.me`；PR4 的自动化生产校验与 smoke test 通过前，页面保留 `noindex` 且 `robots.txt` 禁止抓取。
+- 生产 canonical 域名为 `https://guitar.rothcold.me`；`SITE_INDEXING_ENABLED` 是搜索索引闸门，默认关闭。首次生产 smoke 通过后，只在 Vercel Production 环境将它设为 `true` 并重新部署。
 - Vercel Web Analytics 组件只在共享布局中加载，数据使用说明维护在 `/privacy`。
-- 常用命令为 `npm run dev`、`npm run check`、`npm run build` 和 `npm run preview`。
+- `script/` 使用 Scripts to Rule Them All：`script/setup` 安装依赖，`script/lint` 运行 ESLint 与 Astro check，`script/test` 校验索引关闭和开启两种静态构建，`script/cibuild` 是 CI 入口，`script/smoke` 验证生产站点。
+- GitHub Actions 在 PR 和 `main` push 上运行 `script/cibuild`；`Production smoke` 只手动运行，并要求明确选择预期索引状态。
+- 常用命令为 `npm run dev`、`npm run lint`、`npm run check`、`npm test`、`npm run build` 和 `npm run preview`。
 
 ## 写作约定
 
@@ -55,5 +58,6 @@
 - 新增练习时，按练习卡约定提供完整执行信息，不得只写技巧名称与分钟数。
 - 完成修改后，检查 `docs/` 下 15 篇正文均存在、内部链接有效、每篇只有一个一级标题、标题不跳级，并且没有空章节或占位符。
 - 修改教程 frontmatter 或网站代码后，运行 `npm run check` 和 `npm run build`。
+- 提交网站或教程变更前运行 `script/lint` 和 `script/test`；需要复现 CI 时运行 `script/cibuild`。
 - 新增或重排教程时，同步维护 `id`、`slug`、`order`、`track`、`previous` 和 `next`，确保 ID 与 slug 唯一且导航引用双向一致。
 - 项目发生有意义的结构、命名、写作标准、网站架构或校验方式变化时，必须同步修订本文件。

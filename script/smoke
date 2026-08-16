@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+target_url="${1:-https://guitar.rothcold.me}"
+expected_indexing="${2:-disabled}"
+public_origin="${3:-$target_url}"
+target_url="${target_url%/}"
+public_origin="${public_origin%/}"
+
+case "$expected_indexing" in
+  disabled)
+    robots_meta="noindex, nofollow"
+    robots_directive="Disallow: /"
+    opposite_directive="Allow: /"
+    ;;
+  enabled)
+    robots_meta="index, follow"
+    robots_directive="Allow: /"
+    opposite_directive="Disallow: /"
+    ;;
+  *)
+    echo "Expected indexing must be 'disabled' or 'enabled'." >&2
+    exit 2
+    ;;
+esac
+
+temporary_directory="$(mktemp -d)"
+trap 'rm -r "$temporary_directory"' EXIT
+
+routes=(
+  "/"
+  "/lessons/01"
+  "/lessons/02"
+  "/lessons/03"
+  "/lessons/04"
+  "/lessons/05"
+  "/lessons/06"
+  "/lessons/07"
+  "/lessons/08a"
+  "/lessons/08b"
+  "/lessons/09"
+  "/lessons/10"
+  "/lessons/11"
+  "/lessons/12"
+  "/lessons/13"
+  "/lessons/14"
+  "/privacy"
+)
+
+for route in "${routes[@]}"; do
+  page="$temporary_directory/page.html"
+  if ! status="$(curl --silent --show-error --location \
+    --retry 3 --retry-connrefused --connect-timeout 10 --output "$page" \
+    --write-out "%{http_code}" "$target_url$route")"; then
+    echo "Failed to request $target_url$route" >&2
+    exit 1
+  fi
+
+  if [[ "$status" != "200" ]]; then
+    echo "$route returned HTTP $status" >&2
+    exit 1
+  fi
+
+  if [[ "$route" == "/" ]]; then
+    canonical="$public_origin/"
+  else
+    canonical="$public_origin$route"
+  fi
+
+  grep -Fq "<link rel=\"canonical\" href=\"$canonical\">" "$page"
+  grep -Fq "<meta name=\"robots\" content=\"$robots_meta\">" "$page"
+done
+
+grep -Fq "<vercel-analytics " "$temporary_directory/page.html"
+
+curl --fail --silent --show-error --location --retry 3 --retry-connrefused \
+  --connect-timeout 10 --output "$temporary_directory/robots.txt" \
+  "$target_url/robots.txt"
+grep -Fxq "$robots_directive" "$temporary_directory/robots.txt"
+if grep -Fxq "$opposite_directive" "$temporary_directory/robots.txt"; then
+  echo "robots.txt contains the opposite indexing directive." >&2
+  exit 1
+fi
+grep -Fxq "Sitemap: $public_origin/sitemap-index.xml" \
+  "$temporary_directory/robots.txt"
+
+curl --fail --silent --show-error --location --retry 3 --retry-connrefused \
+  --connect-timeout 10 --output "$temporary_directory/sitemap-index.xml" \
+  "$target_url/sitemap-index.xml"
+grep -Fq "<loc>$public_origin/sitemap-0.xml</loc>" \
+  "$temporary_directory/sitemap-index.xml"
+
+missing_status="$(curl --silent --show-error --location --output /dev/null \
+  --write-out "%{http_code}" "$target_url/__production-smoke-missing")"
+if [[ "$missing_status" != "404" ]]; then
+  echo "Unknown route returned HTTP $missing_status instead of 404." >&2
+  exit 1
+fi
+
+echo "Production smoke passed for $target_url with indexing $expected_indexing."

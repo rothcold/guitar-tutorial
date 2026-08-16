@@ -1,0 +1,24 @@
+name: Production smoke
+
+on:
+  workflow_dispatch:
+    inputs:
+      expected_indexing:
+        description: Expected search indexing state
+        required: true
+        default: disabled
+        type: choice
+        options:
+          - disabled
+          - enabled
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - run: script/smoke https://guitar.rothcold.me "${{ inputs.expected_indexing }}"

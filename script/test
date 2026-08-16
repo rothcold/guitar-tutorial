@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+npm run build
+node --test "$@"
+
+SITE_INDEXING_ENABLED=true npm run build
+SITE_INDEXING_ENABLED=true node --test "$@"
+
+npm run build
