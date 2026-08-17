@@ -29,7 +29,7 @@
 - `src/markdown/lesson-links.ts` 在构建时把正文中的相对 `.md` 链接改写为公开教程路由；不要为了网站路由破坏 Obsidian 和 GitHub 可用的源文件链接。
 - 生产 canonical 域名为 `https://guitar.rothcold.me`；`SITE_INDEXING_ENABLED` 是搜索索引闸门，默认关闭。首次生产 smoke 通过后，只在 Vercel Production 环境将它设为 `true` 并重新部署。
 - Vercel Web Analytics 组件只在共享布局中加载，数据使用说明维护在 `/privacy`。
-- `script/` 使用 Scripts to Rule Them All：`script/setup` 安装依赖，`script/lint` 运行 ESLint 与 Astro check，`script/test` 校验索引关闭和开启两种静态构建，`script/cibuild` 是 CI 入口，`script/smoke` 验证生产站点。
+- `script/` 使用 Scripts to Rule Them All：`script/setup` 安装依赖，`script/lint` 运行 ESLint 与 Astro check，`script/test` 使用 `--experimental-strip-types` 兼容 Node.js 22.12 并校验索引关闭和开启两种静态构建，`script/cibuild` 是 CI 入口，`script/smoke` 验证生产站点。
 - GitHub Actions 在 PR 和 `main` push 上运行 `script/cibuild`；`Production smoke` 只手动运行，并要求明确选择预期索引状态。
 - 常用命令为 `npm run dev`、`npm run lint`、`npm run check`、`npm test`、`npm run build` 和 `npm run preview`。
 
