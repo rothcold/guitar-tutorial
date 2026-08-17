@@ -4,9 +4,9 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 npm run build
-node --test "$@"
+node --experimental-strip-types --test "$@"
 
 SITE_INDEXING_ENABLED=true npm run build
-SITE_INDEXING_ENABLED=true node --test "$@"
+SITE_INDEXING_ENABLED=true node --experimental-strip-types --test "$@"
 
 npm run build
