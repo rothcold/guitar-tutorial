@@ -23,10 +23,17 @@ const trackLabels = {
       lessons.map((lesson) => (
         <li>
           <a
-            class:list={["course-link", { "is-current": lesson.id === currentId }]}
+            class:list={[
+              "course-link",
+              `course-link--${lesson.data.track}`,
+              { "is-current": lesson.id === currentId },
+            ]}
             href={getLessonPath(lesson)}
             aria-current={lesson.id === currentId ? "page" : undefined}
+            data-lesson-node
+            data-lesson-id={lesson.id}
           >
+            <span class="course-link__signal" aria-hidden="true"></span>
             <span class="course-link__id">{lesson.data.id}</span>
             <span class="course-link__body">
               <span class="course-link__title">{lesson.data.title}</span>
@@ -39,4 +46,8 @@ const trackLabels = {
       ))
     }
   </ol>
+  <div class="course-progress" aria-label="本机完成记录" data-course-progress>
+    <span>本机完成记录</span>
+    <span class="course-progress__rail" aria-hidden="true"></span>
+  </div>
 </nav>

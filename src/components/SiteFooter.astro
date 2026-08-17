@@ -1,11 +1,28 @@
-<footer class="site-footer">
+<footer class="site-footer" id="about">
+  <a class="site-footer__brand" href="/">
+    <span>吉他教程</span>
+    <small>guitar.rothcold.me</small>
+  </a>
   <nav aria-label="页脚导航">
-    <a href="https://github.com/rothcold/guitar-tutorial">源代码</a>
-    <span aria-hidden="true">·</span>
-    <a href="https://github.com/rothcold/guitar-tutorial/blob/main/LICENSE"
-      >GNU GPLv3</a
-    >
-    <span aria-hidden="true">·</span>
-    <a href="/privacy">隐私</a>
+    <a href="/privacy">隐私说明</a>
+    <button type="button" data-reset-progress>重置本地进度</button>
+    <a href="https://github.com/rothcold/guitar-tutorial">GitHub</a>
   </nav>
 </footer>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-reset-progress]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const confirmed = window.confirm("重置这台设备上的阅读位置、完成记录和路线偏好吗？");
+      if (!confirmed) return;
+
+      [
+        "guitar-tutorial:last-lesson",
+        "guitar-tutorial:reading",
+        "guitar-tutorial:completed",
+        "guitar-tutorial:preferred-track",
+      ].forEach((key) => localStorage.removeItem(key));
+      window.location.reload();
+    });
+  });
+</script>

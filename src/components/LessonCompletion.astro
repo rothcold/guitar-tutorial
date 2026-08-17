@@ -1,0 +1,69 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  path: string;
+}
+
+const { id, title, path } = Astro.props;
+---
+
+<section
+  class="lesson-completion"
+  aria-labelledby="lesson-completion-title"
+  data-lesson-completion
+  data-lesson-id={id}
+  data-lesson-title={title}
+  data-lesson-path={path}
+>
+  <div>
+    <p class="lesson-completion__eyebrow">SELF CHECK · 不作为进阶门槛</p>
+    <h2 id="lesson-completion-title">完成本篇的自我检查了吗？</h2>
+    <p>确认节奏、放松、音准和干净度后，再由你决定是否标记完成。</p>
+  </div>
+  <button type="button" aria-pressed="false" data-completion-toggle>
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <path d="m5 12 4 4L19 6"></path>
+    </svg>
+    <span data-completion-label>标记本篇完成</span>
+  </button>
+</section>
+
+<script>
+  const completedStorageKey = "guitar-tutorial:completed";
+
+  function readCompletedLessons() {
+    try {
+      const value = JSON.parse(localStorage.getItem(completedStorageKey) ?? "[]");
+      return Array.isArray(value) ? value.filter((entry) => typeof entry === "string") : [];
+    } catch {
+      return [];
+    }
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-lesson-completion]").forEach((panel) => {
+    const lessonId = panel.dataset.lessonId;
+    const button = panel.querySelector<HTMLButtonElement>("[data-completion-toggle]");
+    const label = panel.querySelector<HTMLElement>("[data-completion-label]");
+
+    if (!lessonId || !button || !label) return;
+
+    const render = () => {
+      const isComplete = readCompletedLessons().includes(lessonId);
+      panel.classList.toggle("is-complete", isComplete);
+      button.setAttribute("aria-pressed", String(isComplete));
+      label.textContent = isComplete ? "已标记完成" : "标记本篇完成";
+    };
+
+    button.addEventListener("click", () => {
+      const completed = new Set(readCompletedLessons());
+      if (completed.has(lessonId)) completed.delete(lessonId);
+      else completed.add(lessonId);
+      localStorage.setItem(completedStorageKey, JSON.stringify([...completed]));
+      window.dispatchEvent(new CustomEvent("lesson-progress-change"));
+      render();
+    });
+
+    render();
+  });
+</script>

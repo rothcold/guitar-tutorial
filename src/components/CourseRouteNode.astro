@@ -1,0 +1,37 @@
+---
+import type { Lesson } from "../lib/lessons";
+import { getLessonPath } from "../lib/lessons";
+
+interface Props {
+  lesson: Lesson;
+}
+
+const { lesson } = Astro.props;
+const trackLabels = {
+  common: "共同路线",
+  acoustic: "木吉他路线",
+  electric: "电吉他路线",
+} as const;
+---
+
+<a
+  class:list={["route-node", `route-node--${lesson.data.track}`]}
+  href={getLessonPath(lesson)}
+  data-lesson-node
+  data-lesson-id={lesson.id}
+  data-lesson-path={getLessonPath(lesson)}
+  data-track={lesson.data.track}
+>
+  <span class="route-node__signal" aria-hidden="true">
+    <span></span>
+  </span>
+  <span class="route-node__content">
+    <span class="route-node__meta">
+      <span>{lesson.data.id}</span>
+      <span data-route-state>{trackLabels[lesson.data.track]}</span>
+    </span>
+    <strong>{lesson.data.title.replace(/^第[^：]+：/u, "")}</strong>
+    <small>{lesson.data.description}</small>
+  </span>
+  <span class="route-node__arrow" aria-hidden="true">↗</span>
+</a>
