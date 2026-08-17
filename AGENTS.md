@@ -19,9 +19,13 @@
 - 教程 ID 保留 `01`、`08A`、`08B` 等字符串格式；公开 slug 使用 `01`、`08a`、`08b` 等小写无尾斜杠格式。
 - `track` 只使用 `common`、`acoustic`、`electric`；`previous` 和 `next` 使用内容集合引用描述分流图。
 - `07` 的下一篇为 `08A` 与 `08B`，两条路线都汇合到 `09`；`09` 的上一篇为 `08A` 与 `08B`。
-- `src/pages/lessons/[slug].astro` 从 frontmatter 生成静态教程路由；桌面页面使用课程路径、正文和本页目录三栏布局，移动端使用独立的“课程”与“本页”抽屉。
+- `src/pages/lessons/[slug].astro` 从 frontmatter 生成静态教程路由；桌面页面使用课程路径、正文和本页目录三栏布局，移动端底部提供“课程”“本页”和“主题”控制，其中前两项打开独立抽屉。
 - 教程正文的一级标题来自 Markdown，页面布局不得重复输出标题；本页目录只收录正文中的二至四级标题。
-- 网站只使用 `src/styles/global.css` 中的浅色原生 CSS token，不引入 Tailwind 或组件库；宽表格和六线谱必须保留横向滚动。
+- `design/guitar-tutorial.pen` 是 Pencil v1 设计源；网站使用 K24ce 相思木色系，并只借鉴 DAW 的轨道、时间轴、信号流和状态指示，不制作伪旋钮、推子、传输条或霓虹效果。
+- 网站只使用 `src/styles/global.css` 中的原生 CSS token，不引入 Tailwind 或组件库；浅色与深色主题通过 `data-theme` 切换，首次访问跟随系统，手动选择保存在本地；宽表格和文本谱例必须保留横向滚动。
+- 主题、上次阅读页面、阅读位置、路线偏好和手动完成状态只保存在浏览器本地存储中，不提供账户、同步、连续打卡、完成百分比或内容锁定；对应说明维护在 `/privacy`。
+- `src/markdown/tablature.ts` 在构建时把 fenced `tab` 渲染为正式六线谱；契约要求 `title`、`---` 分隔符和六根标记琴弦，可选字段为 `subtitle`、`tuning`、`meter`、`tempo`、`beats`、`techniques` 和 `note`。
+- fenced `text` 仍在客户端增强为可展开的“文本谱例”；只有人工确认的完整六弦 ASCII 谱可以迁移为 `tab`，不得推断调弦、拍号或速度。
 - `src/markdown/lesson-links.ts` 在构建时把正文中的相对 `.md` 链接改写为公开教程路由；不要为了网站路由破坏 Obsidian 和 GitHub 可用的源文件链接。
 - 生产 canonical 域名为 `https://guitar.rothcold.me`；`SITE_INDEXING_ENABLED` 是搜索索引闸门，默认关闭。首次生产 smoke 通过后，只在 Vercel Production 环境将它设为 `true` 并重新部署。
 - Vercel Web Analytics 组件只在共享布局中加载，数据使用说明维护在 `/privacy`。

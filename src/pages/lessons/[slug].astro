@@ -1,5 +1,6 @@
 ---
 import CourseNavigation from "../../components/CourseNavigation.astro";
+import LessonCompletion from "../../components/LessonCompletion.astro";
 import LessonPagination from "../../components/LessonPagination.astro";
 import MobileLessonNavigation from "../../components/MobileLessonNavigation.astro";
 import PageTableOfContents from "../../components/PageTableOfContents.astro";
@@ -33,6 +34,7 @@ const previousLessons = resolveLessonReferences(
 );
 const nextLessons = resolveLessonReferences(lesson.data.next, lessonsById);
 const { Content, headings } = await render(lesson);
+const lessonPath = `/lessons/${lesson.data.slug}`;
 
 const trackLabels = {
   common: "木吉他与电吉他共通路线",
@@ -44,7 +46,7 @@ const trackLabels = {
 <SiteLayout
   title={lesson.data.title}
   description={lesson.data.description}
-  canonicalPath={`/lessons/${lesson.data.slug}`}
+  canonicalPath={lessonPath}
   type="article"
 >
   <MobileLessonNavigation
@@ -66,14 +68,19 @@ const trackLabels = {
     <main id="main-content" class="lesson-main">
       <div class="lesson-context">
         <a href="/">课程首页</a>
-        <span aria-hidden="true">/</span>
-        <span>Level {lesson.data.level}</span>
-        <span aria-hidden="true">/</span>
+        <span aria-hidden="true">›</span>
+        <span>LEVEL {lesson.data.level}</span>
+        <span aria-hidden="true">›</span>
         <span>{trackLabels[lesson.data.track]}</span>
       </div>
       <article class="prose">
         <Content />
       </article>
+      <LessonCompletion
+        id={lesson.data.id}
+        title={lesson.data.title}
+        path={lessonPath}
+      />
       <LessonPagination
         previousLessons={previousLessons}
         nextLessons={nextLessons}
@@ -85,4 +92,121 @@ const trackLabels = {
       <PageTableOfContents headings={headings} labelledBy="desktop-toc-title" />
     </aside>
   </div>
+
+  <script is:inline define:vars={{ lessonPath, lessonId: lesson.data.id, lessonTitle: lesson.data.title, lessonDescription: lesson.data.description }}>
+    const lastLessonKey = "guitar-tutorial:last-lesson";
+    const readingKey = "guitar-tutorial:reading";
+
+    const readPositions = () => {
+      try {
+        const value = JSON.parse(localStorage.getItem(readingKey) ?? "{}");
+        return value && typeof value === "object" ? value : {};
+      } catch {
+        return {};
+      }
+    };
+
+    const saveReadingState = () => {
+      const positions = readPositions();
+      positions[lessonPath] = Math.max(0, Math.round(window.scrollY));
+      localStorage.setItem(readingKey, JSON.stringify(positions));
+      localStorage.setItem(
+        lastLessonKey,
+        JSON.stringify({
+          id: lessonId,
+          path: lessonPath,
+          title: lessonTitle,
+          description: lessonDescription,
+        }),
+      );
+    };
+
+    let saveTimer;
+    window.addEventListener(
+      "scroll",
+      () => {
+        window.clearTimeout(saveTimer);
+        saveTimer = window.setTimeout(saveReadingState, 180);
+      },
+      { passive: true },
+    );
+    window.addEventListener("pagehide", saveReadingState);
+    saveReadingState();
+
+    if (new URLSearchParams(window.location.search).get("resume") === "1") {
+      const savedPosition = readPositions()[lessonPath];
+      if (typeof savedPosition === "number") {
+        requestAnimationFrame(() => window.scrollTo({ top: savedPosition, behavior: "instant" }));
+      }
+    }
+
+    document.querySelectorAll(".prose pre").forEach((pre, index) => {
+      if (
+        pre.closest(".tablature") ||
+        pre.parentElement?.classList.contains("notation-shell")
+      ) return;
+
+      const shell = document.createElement("section");
+      shell.className = "notation-shell";
+      shell.setAttribute("aria-label", `文本谱例 ${index + 1}`);
+
+      const header = document.createElement("div");
+      header.className = "notation-shell__header";
+
+      const label = document.createElement("span");
+      label.textContent = "TEXT NOTATION · 文本谱例";
+
+      const expand = document.createElement("button");
+      expand.type = "button";
+      expand.textContent = "展开";
+      expand.setAttribute("aria-expanded", "false");
+
+      pre.before(shell);
+      header.append(label, expand);
+      shell.append(header, pre);
+      pre.tabIndex = 0;
+
+      expand.addEventListener("click", () => {
+        const isExpanded = shell.classList.toggle("is-expanded");
+        expand.setAttribute("aria-expanded", String(isExpanded));
+        expand.textContent = isExpanded ? "收起" : "展开";
+        document.body.classList.toggle("has-expanded-notation", isExpanded);
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && shell.classList.contains("is-expanded")) {
+          shell.classList.remove("is-expanded");
+          expand.setAttribute("aria-expanded", "false");
+          expand.textContent = "展开";
+          document.body.classList.remove("has-expanded-notation");
+        }
+      });
+    });
+
+    document.querySelectorAll("[data-tablature-expand]").forEach((button) => {
+      const tablature = button.closest(".tablature");
+
+      if (!tablature) return;
+
+      const close = () => {
+        tablature.classList.remove("is-expanded");
+        button.setAttribute("aria-expanded", "false");
+        button.textContent = "展开";
+        document.body.classList.remove("has-expanded-notation");
+      };
+
+      button.addEventListener("click", () => {
+        const isExpanded = tablature.classList.toggle("is-expanded");
+        button.setAttribute("aria-expanded", String(isExpanded));
+        button.textContent = isExpanded ? "收起" : "展开";
+        document.body.classList.toggle("has-expanded-notation", isExpanded);
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && tablature.classList.contains("is-expanded")) {
+          close();
+        }
+      });
+    });
+  </script>
 </SiteLayout>

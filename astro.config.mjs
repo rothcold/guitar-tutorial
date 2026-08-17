@@ -5,6 +5,7 @@ import { URL } from "node:url";
 
 import { accessibleTablesPlugin } from "./src/markdown/accessible-tables.ts";
 import { lessonLinksPlugin } from "./src/markdown/lesson-links.ts";
+import { tablaturePlugin } from "./src/markdown/tablature.ts";
 
 export default defineConfig({
   output: "static",
@@ -25,9 +26,13 @@ export default defineConfig({
     }),
   ],
   markdown: {
+    syntaxHighlight: {
+      type: "shiki",
+      excludeLangs: ["math", "tab"],
+    },
     processor: satteri({
       mdastPlugins: [lessonLinksPlugin],
-      hastPlugins: [accessibleTablesPlugin],
+      hastPlugins: [accessibleTablesPlugin, tablaturePlugin],
       features: {
         gfm: true,
         smartPunctuation: false,

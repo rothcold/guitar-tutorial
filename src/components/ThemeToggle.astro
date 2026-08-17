@@ -1,0 +1,48 @@
+<button
+  class="theme-toggle"
+  type="button"
+  aria-label="切换浅色或深色主题"
+  aria-pressed="false"
+  data-theme-toggle
+>
+  <span class="theme-toggle__track" aria-hidden="true">
+    <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="3.5"></circle>
+      <path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"></path>
+    </svg>
+    <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24">
+      <path d="M20.5 15.2A8.5 8.5 0 0 1 8.8 3.5 8.7 8.7 0 1 0 20.5 15.2Z"></path>
+    </svg>
+    <span class="theme-toggle__thumb"></span>
+  </span>
+  <span class="theme-toggle__label" data-theme-label>主题</span>
+</button>
+
+<script>
+  const themeStorageKey = "guitar-tutorial:theme";
+
+  function currentTheme() {
+    return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+  }
+
+  function updateThemeControls(theme: "light" | "dark") {
+    document.querySelectorAll<HTMLElement>("[data-theme-toggle]").forEach((toggle) => {
+      const isDark = theme === "dark";
+      toggle.setAttribute("aria-pressed", String(isDark));
+      toggle.setAttribute("aria-label", isDark ? "切换到浅色主题" : "切换到深色主题");
+      const label = toggle.querySelector<HTMLElement>("[data-theme-label]");
+      if (label) label.textContent = isDark ? "深色" : "浅色";
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-theme-toggle]").forEach((toggle) => {
+    toggle.addEventListener("click", () => {
+      const nextTheme = currentTheme() === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = nextTheme;
+      localStorage.setItem(themeStorageKey, nextTheme);
+      updateThemeControls(nextTheme);
+    });
+  });
+
+  updateThemeControls(currentTheme());
+</script>

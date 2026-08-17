@@ -30,6 +30,18 @@ const canonicalUrl = new URL(canonicalPath, Astro.site);
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      (() => {
+        const storedTheme = localStorage.getItem("guitar-tutorial:theme");
+        const theme =
+          storedTheme === "light" || storedTheme === "dark"
+            ? storedTheme
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
     <meta name="description" content={description} />
     <meta
       name="robots"
@@ -52,5 +64,31 @@ const canonicalUrl = new URL(canonicalPath, Astro.site);
     <SiteHeader />
     <slot />
     <SiteFooter />
+    <script>
+      const completedKey = "guitar-tutorial:completed";
+
+      function completedLessonIds() {
+        try {
+          const value = JSON.parse(localStorage.getItem(completedKey) ?? "[]");
+          return Array.isArray(value) ? value : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function renderLocalProgress() {
+        const completed = new Set(completedLessonIds());
+        document.querySelectorAll<HTMLElement>("[data-lesson-node]").forEach((node) => {
+          node.classList.toggle("is-complete", completed.has(node.dataset.lessonId));
+        });
+
+        document.querySelectorAll<HTMLElement>("[data-course-progress]").forEach((rail) => {
+          rail.style.setProperty("--course-progress", `${(completed.size / 15) * 100}%`);
+        });
+      }
+
+      window.addEventListener("lesson-progress-change", renderLocalProgress);
+      renderLocalProgress();
+    </script>
   </body>
 </html>

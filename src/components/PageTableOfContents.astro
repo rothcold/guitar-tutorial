@@ -14,9 +14,12 @@ const pageHeadings = headings.filter(({ depth }) => depth >= 2);
   {
     pageHeadings.length > 0 ? (
       <ol>
-        {pageHeadings.map((heading) => (
+        {pageHeadings.map((heading, index) => (
           <li class={`page-toc__depth-${heading.depth}`}>
-            <a href={`#${heading.slug}`}>{heading.text}</a>
+            <a href={`#${heading.slug}`}>
+              <span aria-hidden="true">{String(index).padStart(2, "0")}</span>
+              <span>{heading.text}</span>
+            </a>
           </li>
         ))}
       </ol>

@@ -1,26 +1,15 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import CourseRouteNode from "../components/CourseRouteNode.astro";
 import { getLessonPath, getOrderedLessons } from "../lib/lessons";
 
 const lessons = await getOrderedLessons();
 const firstLesson = lessons[0];
 const descriptor = "从零基础到独立演奏、即兴、扒歌、编曲与创作";
 
-const levelGroups = [
-  { level: "1", label: "Level 1" },
-  { level: "2", label: "Level 2" },
-  { level: "3", label: "Level 3" },
-  { level: "4", label: "Level 4" },
-  { level: "5", label: "Level 5 · 分流路线" },
-  { level: "6", label: "Level 6" },
-].map((group) => ({
-  ...group,
-  lessons: lessons.filter((lesson) =>
-    group.level === "5"
-      ? lesson.data.level.startsWith("5")
-      : lesson.data.level === group.level,
-  ),
-}));
+const sharedFoundation = lessons.filter((lesson) => lesson.data.order <= 7);
+const branchLessons = lessons.filter((lesson) => lesson.data.track !== "common");
+const sharedAdvanced = lessons.filter((lesson) => lesson.data.order >= 10);
 ---
 
 <SiteLayout
@@ -29,62 +18,131 @@ const levelGroups = [
   canonicalPath="/"
 >
   <main id="main-content" class="home-main">
-    <section class="home-hero">
-      <p class="eyebrow">15 篇中文教程</p>
-      <h1>吉他教程</h1>
-      <p class="home-hero__descriptor">{descriptor}</p>
-      <p class="home-hero__intro">
-        这是一套按学习路径编排的中文吉他教程。前七篇建立木吉他与电吉他共通能力，第八篇按乐器和目标分流，之后重新汇合到高级乐理、即兴、听力、创作和完整音乐能力。
-      </p>
-      {
-        firstLesson && (
-          <a class="primary-link" href={getLessonPath(firstLesson)}>从第一篇开始</a>
-        )
-      }
-    </section>
-
-    <section class="home-section" aria-labelledby="course-heading">
-      <div class="home-section__heading">
-        <p class="eyebrow">学习路线</p>
-        <h2 id="course-heading">阅读顺序</h2>
-        <p>
-          建议按顺序学习，但篇末完成标准只用于自我检查，不是阅读下一篇的硬性门槛。完成第七篇后选择 A 或 B 路线，也可以先主修一条，再补另一条。
+    <section class="home-hero" aria-labelledby="home-title">
+      <div class="home-hero__copy">
+        <p class="eyebrow"><span></span> 从零基础到完整音乐能力</p>
+        <h1 id="home-title">从第一把琴，<br />到自己的声音。</h1>
+        <p class="home-hero__descriptor">{descriptor}</p>
+        <p class="home-hero__intro">
+          按一条清晰的信号路径学习：先建立动作与节奏，再走向指板、即兴、扒歌、编曲与创作。每一篇都有可以直接执行的练习安排。
         </p>
+        <div class="home-hero__actions">
+          {
+            firstLesson && (
+              <a class="primary-link" href={getLessonPath(firstLesson)}>从第一篇开始 <span aria-hidden="true">↗</span></a>
+            )
+          }
+          <a class="secondary-link" href="#course-map">查看课程路线</a>
+        </div>
+        <dl class="home-hero__stats">
+          <div><dt>15</dt><dd>篇教程</dd></div>
+          <div><dt>6</dt><dd>个阶段</dd></div>
+          <div><dt>2</dt><dd>条分流路线</dd></div>
+        </dl>
       </div>
 
-      <div class="level-groups">
+      <div class="home-hero__visual">
+        <svg class="signal-visual" aria-hidden="true" viewBox="0 0 500 360">
+          <g class="signal-visual__strings">
+            <path d="M30 70H470"></path><path d="M30 108H470"></path>
+            <path d="M30 146H470"></path><path d="M30 184H470"></path>
+            <path d="M30 222H470"></path><path d="M30 260H470"></path>
+          </g>
+          <g class="signal-visual__frets">
+            <path d="M92 54v222M162 54v222M238 54v222M320 54v222M408 54v222"></path>
+          </g>
+          <path class="signal-visual__wave" d="M30 183c36 0 43-66 74-66s37 133 72 133 43-101 80-101 39 70 73 70 42-43 66-43 34 8 75 8"></path>
+          <g class="signal-visual__nodes">
+            <circle cx="30" cy="183" r="6"></circle><circle cx="176" cy="250" r="6"></circle>
+            <circle cx="329" cy="219" r="6"></circle><circle cx="470" cy="184" r="6"></circle>
+          </g>
+        </svg>
+
         {
-          levelGroups.map((group) => (
-            <section class="level-group">
-              <h3>{group.label}</h3>
-              <ol>
-                {group.lessons.map((lesson) => (
-                  <li>
-                    <a href={getLessonPath(lesson)}>
-                      <span>{lesson.data.title}</span>
-                      <small>{lesson.data.description}</small>
-                    </a>
-                  </li>
-                ))}
-              </ol>
-            </section>
-          ))
+          firstLesson && (
+            <a class="continue-card" href={getLessonPath(firstLesson)} data-continue-card>
+              <span class="continue-card__label">从这里开始</span>
+              <strong data-continue-title>{firstLesson.data.title}</strong>
+              <small data-continue-description>{firstLesson.data.description}</small>
+              <span class="continue-card__action" data-continue-action>开始学习 <span aria-hidden="true">↗</span></span>
+            </a>
+          )
         }
       </div>
     </section>
 
-    <section class="home-section home-guide" aria-labelledby="guide-heading">
+    <section class="home-section home-course" id="course-map" aria-labelledby="course-heading">
       <div class="home-section__heading">
-        <p class="eyebrow">练习方法</p>
-        <h2 id="guide-heading">如何使用</h2>
+        <p class="eyebrow"><span></span> SIGNAL PATH · 学习路线</p>
+        <h2 id="course-heading">一条线，直到你不再需要它。</h2>
+        <p>
+          前七篇建立共同基础，第八篇按乐器分流，第九篇重新汇合。完成状态只保存在这台设备上，也不会锁住任何内容。
+        </p>
+        <div class="route-legend" aria-label="路线图例">
+          <span><i></i>共同路线</span>
+          <span><i></i>分流路线</span>
+          <span><i></i>本机已完成</span>
+        </div>
       </div>
-      <ol>
-        <li>先选择 25、45 或 90 分钟档，再按篇内的训练日顺序推进。</li>
-        <li>每次练习先调音，演奏和节奏任务使用篇内指定的节拍器速度。</li>
-        <li>每周至少保留一次短录音、谱例、分析表或工程版本。</li>
-        <li>篇末完成标准用于判断当前状态，可以边阅读下一篇，边重复需要巩固的训练日。</li>
-        <li>练习周期可以按掌握速度缩短或延长，遇到动作疼痛时先停止练习。</li>
+
+      <div class="course-signal-track">
+        {sharedFoundation.map((lesson) => <CourseRouteNode lesson={lesson} />)}
+        <p class="course-signal-track__label">07 后选择主修路线，两条都保持开放</p>
+        <div class="course-signal-track__branches">
+          {branchLessons.map((lesson) => <CourseRouteNode lesson={lesson} />)}
+        </div>
+        <p class="course-signal-track__label course-signal-track__label--merge">在 09 重新汇合</p>
+        {sharedAdvanced.map((lesson) => <CourseRouteNode lesson={lesson} />)}
+      </div>
+    </section>
+
+    <section class="home-section home-guide" id="practice-method" aria-labelledby="guide-heading">
+      <div class="home-section__heading">
+        <p class="eyebrow"><span></span> PRACTICE LOOP · 练习方法</p>
+        <h2 id="guide-heading">练习不是完成页面，是听见变化。</h2>
+        <p>每一轮都从明确任务开始，以可听见、可复查的结果结束。</p>
+      </div>
+      <ol class="practice-steps">
+        <li><span>01</span><strong>选择时间档</strong><p>从 25、45 或 90 分钟中选择当天能稳定完成的一档。</p></li>
+        <li><span>02</span><strong>运行训练日</strong><p>按当前训练日完成核心项与轮换项，休息后顺延，不追赶。</p></li>
+        <li><span>03</span><strong>留下证据</strong><p>保存一次短录音、谱例、分析表或工程版本，再决定下一轮重点。</p></li>
       </ol>
     </section>
   </main>
+
+  <script>
+    const lastLessonKey = "guitar-tutorial:last-lesson";
+    const preferredTrackKey = "guitar-tutorial:preferred-track";
+
+    try {
+      const lastLesson = JSON.parse(localStorage.getItem(lastLessonKey) ?? "null");
+      const continueCard = document.querySelector<HTMLAnchorElement>("[data-continue-card]");
+
+      if (continueCard && lastLesson?.path && lastLesson?.title) {
+        continueCard.href = `${lastLesson.path}?resume=1`;
+        const title = continueCard.querySelector<HTMLElement>("[data-continue-title]");
+        const description = continueCard.querySelector<HTMLElement>("[data-continue-description]");
+        const action = continueCard.querySelector<HTMLElement>("[data-continue-action]");
+        if (title) title.textContent = lastLesson.title;
+        if (description) description.textContent = lastLesson.description ?? "回到上次阅读的位置";
+        if (action) action.firstChild!.textContent = "继续学习 ";
+        continueCard.querySelector(".continue-card__label")!.textContent = "继续上次学习";
+
+        document.querySelector<HTMLElement>(`[data-lesson-path="${lastLesson.path}"]`)?.classList.add("is-current");
+      }
+    } catch {
+      localStorage.removeItem(lastLessonKey);
+    }
+
+    const preferredTrack = localStorage.getItem(preferredTrackKey);
+    if (preferredTrack === "acoustic" || preferredTrack === "electric") {
+      document.querySelector<HTMLElement>(`[data-track="${preferredTrack}"]`)?.classList.add("is-preferred");
+    }
+
+    document.querySelectorAll<HTMLAnchorElement>("[data-track='acoustic'], [data-track='electric']").forEach((link) => {
+      link.addEventListener("click", () => {
+        localStorage.setItem(preferredTrackKey, link.dataset.track!);
+      });
+    });
+  </script>
 </SiteLayout>
