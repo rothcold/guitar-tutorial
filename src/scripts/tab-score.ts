@@ -451,11 +451,14 @@ function drawTies(
 
   if (previousEvent?.modifiers.includes("tie") && coordinates[0]) {
     const first = coordinates[0];
-    const y = staffTop + (first.event.notes[0].string - 1) * 16 - 6;
-    context.beginPath();
-    context.moveTo(first.measureStart + 3, y);
-    context.quadraticCurveTo((first.measureStart + first.x) / 2, y - 9, first.x - 5, y);
-    context.stroke();
+
+    for (const note of first.event.notes) {
+      const y = staffTop + (note.string - 1) * 16 - 6;
+      context.beginPath();
+      context.moveTo(first.measureStart + 3, y);
+      context.quadraticCurveTo((first.measureStart + first.x) / 2, y - 9, first.x - 5, y);
+      context.stroke();
+    }
   }
 
   for (const [index, coordinate] of coordinates.entries()) {
@@ -463,12 +466,14 @@ function drawTies(
 
     const next = coordinates[index + 1];
     const end = next?.x ?? coordinate.measureEnd - 3;
-    const startY = staffTop + (coordinate.event.notes[0].string - 1) * 16 - 6;
 
-    context.beginPath();
-    context.moveTo(coordinate.x + 5, startY);
-    context.quadraticCurveTo((coordinate.x + end) / 2, startY - 9, end - 5, startY);
-    context.stroke();
+    for (const note of coordinate.event.notes) {
+      const y = staffTop + (note.string - 1) * 16 - 6;
+      context.beginPath();
+      context.moveTo(coordinate.x + 5, y);
+      context.quadraticCurveTo((coordinate.x + end) / 2, y - 9, end - 5, y);
+      context.stroke();
+    }
   }
 }
 
@@ -707,9 +712,13 @@ class TabScoreRenderer {
         : document.createElement("div");
       const existingCanvas = wrapper.querySelector("canvas");
       const canvas = existingCanvas ?? document.createElement("canvas");
-      const denseWidth = mobile
-        ? Math.max(width, 72 + Math.max(...measures.map((measure) => measure.events.length)) * 20)
-        : width;
+      const maximumEventCount = Math.max(
+        ...measures.map((measure) => measure.events.length),
+      );
+      const minimumSystemWidth = 72 + maximumEventCount * 20 * measuresPerSystem;
+      const denseWidth = this.#printing
+        ? width
+        : Math.max(width, minimumSystemWidth);
 
       wrapper.className = "tab-score__system";
       canvas.className = "tab-score__canvas";
