@@ -24,8 +24,10 @@
 - `design/guitar-tutorial.pen` 是 Pencil v1 设计源；网站使用 K24ce 相思木色系，并只借鉴 DAW 的轨道、时间轴、信号流和状态指示，不制作伪旋钮、推子、传输条或霓虹效果。
 - 网站只使用 `src/styles/global.css` 中的原生 CSS token，不引入 Tailwind 或组件库；浅色与深色主题通过 `data-theme` 切换，首次访问跟随系统，手动选择保存在本地；宽表格和文本谱例必须保留横向滚动。
 - 主题、上次阅读页面、阅读位置、路线偏好和手动完成状态只保存在浏览器本地存储中，不提供账户、同步、连续打卡、完成百分比或内容锁定；对应说明维护在 `/privacy`。
-- `src/markdown/tablature.ts` 在构建时把 fenced `tab` 渲染为正式六线谱；契约要求 `title`、`---` 分隔符和六根标记琴弦，可选字段为 `subtitle`、`tuning`、`meter`、`tempo`、`beats`、`techniques` 和 `note`。
-- fenced `text` 仍在客户端增强为可展开的“文本谱例”；只有人工确认的完整六弦 ASCII 谱可以迁移为 `tab`，不得推断调弦、拍号或速度。
+- fenced `tab-diagram` 用于音阶、和弦形状和指板图，保留六行 ASCII 契约与局部横向滚动；fenced `tab-score` 用于有明确时值的节奏六线谱，旧 fenced `tab` 必须构建失败。
+- `src/markdown/tab-score.ts` 解析每小节一行、事件以 `|` 分隔的 DSL，强制拍号和小节时值总和；事件示例为 `e 6:0 {pm down accent}`，整段反复使用 `repeat: N`，入门数拍默认展开使用 `counts: open`。
+- `src/scripts/tab-score.ts` 只使用原生 Canvas 2D 绘制节奏谱，不引入 D3 或记谱库；桌面每个系统固定四个等宽小节，不根据音符数量动态换行；移动端每个系统一个小节，Canvas 对读屏隐藏，服务端输出逐小节语义描述。
+- fenced `text` 仍在客户端增强为可展开的“文本谱例”；只有人工确认的完整音乐信息可以迁移为 `tab-score`，不得推断调弦、拍号、速度、时值或技巧时序。
 - `src/markdown/lesson-links.ts` 在构建时把正文中的相对 `.md` 链接改写为公开教程路由；不要为了网站路由破坏 Obsidian 和 GitHub 可用的源文件链接。
 - 生产 canonical 域名为 `https://guitar.rothcold.me`；`SITE_INDEXING_ENABLED` 是搜索索引闸门，默认关闭。首次生产 smoke 通过后，只在 Vercel Production 环境将它设为 `true` 并重新部署。
 - Vercel Web Analytics 组件只在共享布局中加载，数据使用说明维护在 `/privacy`。

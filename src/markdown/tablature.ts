@@ -1,6 +1,8 @@
 import type { Element, ElementContent, Properties, Text } from "hast";
 import { defineHastPlugin } from "satteri";
 
+import { parseTabScore, renderTabScore } from "./tab-score.ts";
+
 const metadataKeys = [
   "title",
   "subtitle",
@@ -12,20 +14,20 @@ const metadataKeys = [
   "note",
 ] as const;
 
-type TablatureMetadataKey = (typeof metadataKeys)[number];
+type TabDiagramMetadataKey = (typeof metadataKeys)[number];
 
-export type TablatureMetadata = Partial<
-  Record<Exclude<TablatureMetadataKey, "title">, string>
+export type TabDiagramMetadata = Partial<
+  Record<Exclude<TabDiagramMetadataKey, "title">, string>
 > & {
   title: string;
 };
 
-export interface TablatureString {
+export interface TabDiagramString {
   label: string;
   measures: string[];
 }
 
-export interface TablatureMeasure {
+export interface TabDiagramMeasure {
   number: number;
   width: number;
   strings: Array<{
@@ -34,10 +36,10 @@ export interface TablatureMeasure {
   }>;
 }
 
-export interface Tablature {
-  metadata: TablatureMetadata;
-  strings: TablatureString[];
-  measures: TablatureMeasure[];
+export interface TabDiagram {
+  metadata: TabDiagramMetadata;
+  strings: TabDiagramString[];
+  measures: TabDiagramMeasure[];
   source: string;
 }
 
@@ -64,31 +66,31 @@ function element(
   };
 }
 
-function parseMetadata(lines: string[]): TablatureMetadata {
-  const metadata = new Map<TablatureMetadataKey, string>();
+function parseMetadata(lines: string[]): TabDiagramMetadata {
+  const metadata = new Map<TabDiagramMetadataKey, string>();
 
   for (const line of lines) {
     const separatorIndex = line.indexOf(":");
 
     if (separatorIndex === -1) {
-      throw new Error(`tablature metadata must use "key: value": ${line}`);
+      throw new Error(`tab-diagram metadata must use "key: value": ${line}`);
     }
 
     const key = line.slice(0, separatorIndex).trim();
     const value = line.slice(separatorIndex + 1).trim();
 
-    if (!metadataKeys.includes(key as TablatureMetadataKey)) {
-      throw new Error(`unknown metadata key in tablature: ${key}`);
+    if (!metadataKeys.includes(key as TabDiagramMetadataKey)) {
+      throw new Error(`unknown metadata key in tab-diagram: ${key}`);
     }
 
-    const typedKey = key as TablatureMetadataKey;
+    const typedKey = key as TabDiagramMetadataKey;
 
     if (metadata.has(typedKey)) {
-      throw new Error(`duplicate metadata key in tablature: ${key}`);
+      throw new Error(`duplicate metadata key in tab-diagram: ${key}`);
     }
 
     if (!value) {
-      throw new Error(`tablature metadata value cannot be empty: ${key}`);
+      throw new Error(`tab-diagram metadata value cannot be empty: ${key}`);
     }
 
     metadata.set(typedKey, value);
@@ -97,25 +99,25 @@ function parseMetadata(lines: string[]): TablatureMetadata {
   const title = metadata.get("title");
 
   if (!title) {
-    throw new Error("tablature title is required");
+    throw new Error("tab-diagram title is required");
   }
 
-  return Object.fromEntries(metadata) as TablatureMetadata;
+  return Object.fromEntries(metadata) as TabDiagramMetadata;
 }
 
-function parseStringLine(line: string, lineNumber: number): TablatureString {
+function parseStringLine(line: string, lineNumber: number): TabDiagramString {
   const match = /^([^|\s]+)\|(.+)\|$/u.exec(line);
 
   if (!match) {
     throw new Error(
-      `tablature string line ${lineNumber} must use "label|content|" and end with a barline`,
+      `tab-diagram string line ${lineNumber} must use "label|content|" and end with a barline`,
     );
   }
 
   const measures = match[2].split("|");
 
   if (measures.some((measure) => measure.length === 0)) {
-    throw new Error(`tablature string line ${lineNumber} contains an empty measure`);
+    throw new Error(`tab-diagram string line ${lineNumber} contains an empty measure`);
   }
 
   return {
@@ -124,20 +126,20 @@ function parseStringLine(line: string, lineNumber: number): TablatureString {
   };
 }
 
-export function parseTablature(source: string): Tablature {
+export function parseTabDiagram(source: string): TabDiagram {
   const normalizedSource = source.replaceAll("\r\n", "\n").trim();
   const lines = normalizedSource.split("\n");
   const separatorIndex = lines.indexOf("---");
 
   if (separatorIndex === -1) {
-    throw new Error('tablature must separate metadata and strings with "---"');
+    throw new Error('tab-diagram must separate metadata and strings with "---"');
   }
 
   const metadata = parseMetadata(lines.slice(0, separatorIndex));
   const stringLines = lines.slice(separatorIndex + 1).filter(Boolean);
 
   if (stringLines.length !== 6) {
-    throw new Error("tablature must contain exactly six string lines");
+    throw new Error("tab-diagram must contain exactly six string lines");
   }
 
   const strings = stringLines.map((line, index) =>
@@ -146,7 +148,7 @@ export function parseTablature(source: string): Tablature {
   const measureCount = strings[0].measures.length;
 
   if (strings.some((string) => string.measures.length !== measureCount)) {
-    throw new Error("every tablature string must contain the same number of measures");
+    throw new Error("every tab-diagram string must contain the same number of measures");
   }
 
   const measures = Array.from({ length: measureCount }, (_, index) => {
@@ -170,7 +172,7 @@ export function parseTablature(source: string): Tablature {
   };
 }
 
-function renderMetadata(metadata: TablatureMetadata): ElementContent[] {
+function renderMetadata(metadata: TabDiagramMetadata): ElementContent[] {
   const values = [
     metadata.tuning ? `TUNING ${metadata.tuning}` : undefined,
     metadata.meter ? `METER ${metadata.meter}` : undefined,
@@ -190,7 +192,7 @@ function renderMetadata(metadata: TablatureMetadata): ElementContent[] {
   ];
 }
 
-function renderMeasure(measure: TablatureMeasure, beats?: string): Element {
+function renderMeasure(measure: TabDiagramMeasure, beats?: string): Element {
   const children: ElementContent[] = [
     element("p", "tablature__measure-label", [text(`小节 ${measure.number}`)]),
   ];
@@ -225,7 +227,7 @@ function renderMeasure(measure: TablatureMeasure, beats?: string): Element {
   });
 }
 
-function renderTablature(tablature: Tablature): Element {
+function renderTabDiagram(tablature: TabDiagram): Element {
   const { metadata } = tablature;
   const descriptionParts = [metadata.techniques, metadata.note].filter(
     (value): value is string => Boolean(value),
@@ -234,10 +236,10 @@ function renderTablature(tablature: Tablature): Element {
     .map((string) => `${string.label}|${string.measures.join("|")}|`)
     .join("\n");
 
-  return element("figure", "tablature", [
+  return element("figure", ["tablature", "tab-diagram"], [
     element("figcaption", "tablature__header", [
       element("div", "tablature__heading", [
-        element("span", "tablature__eyebrow", [text("TAB · 六线谱")]),
+        element("span", "tablature__eyebrow", [text("TAB DIAGRAM · 六线图示")]),
         element("p", "tablature__title", [text(metadata.title)]),
         ...(metadata.subtitle
           ? [element("p", "tablature__subtitle", [text(metadata.subtitle)])]
@@ -263,7 +265,7 @@ function renderTablature(tablature: Tablature): Element {
       ),
       {
         tabIndex: 0,
-        ariaLabel: `${metadata.title} 六线谱`,
+        ariaLabel: `${metadata.title} 六线图示`,
       },
     ),
     ...(descriptionParts.length > 0
@@ -297,24 +299,37 @@ export const tablaturePlugin = defineHastPlugin({
       );
       const classNames = code?.properties.className;
 
-      if (
-        !code ||
-        !Array.isArray(classNames) ||
-        !classNames.includes("language-tab")
-      ) {
+      if (!code || !Array.isArray(classNames)) {
+        return;
+      }
+
+      if (classNames.includes("language-tab")) {
+        const source = context.fileURL?.pathname ?? "Markdown source";
+
+        throw new Error(
+          `${source}: fenced tab is no longer supported; use tab-score or tab-diagram`,
+        );
+      }
+
+      const isDiagram = classNames.includes("language-tab-diagram");
+      const isScore = classNames.includes("language-tab-score");
+
+      if (!isDiagram && !isScore) {
         return;
       }
 
       try {
         context.replaceNode(
           node,
-          renderTablature(parseTablature(context.textContent(code))),
+          isDiagram
+            ? renderTabDiagram(parseTabDiagram(context.textContent(code)))
+            : renderTabScore(parseTabScore(context.textContent(code))),
         );
       } catch (error) {
         const source = context.fileURL?.pathname ?? "Markdown source";
         const message = error instanceof Error ? error.message : String(error);
 
-        throw new Error(`${source}: invalid tablature: ${message}`, {
+        throw new Error(`${source}: invalid ${isDiagram ? "tab-diagram" : "tab-score"}: ${message}`, {
           cause: error,
         });
       }

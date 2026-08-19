@@ -110,7 +110,10 @@ test("every HTML page has one H1, canonical metadata, and the indexing gate", as
 
 test("the Pencil v1 learning controls are present in the static output", async () => {
   const home = await readRoute("/");
-  const lesson = await readRoute("/lessons/07");
+  const lesson02 = await readRoute("/lessons/02");
+  const lesson06 = await readRoute("/lessons/06");
+  const lesson07 = await readRoute("/lessons/07");
+  const lesson08b = await readRoute("/lessons/08b");
   const privacy = await readRoute("/privacy");
 
   assert.match(home, /data-theme-toggle/u);
@@ -119,15 +122,26 @@ test("the Pencil v1 learning controls are present in the static output", async (
   assert.match(home, /data-track="acoustic"/u);
   assert.match(home, /data-track="electric"/u);
 
-  assert.match(lesson, /data-mobile-nav/u);
-  assert.match(lesson, /data-lesson-completion/u);
-  assert.match(lesson, /data-completion-toggle/u);
-  assert.match(lesson, /guitar-tutorial:reading/u);
-  assert.match(lesson, /TEXT NOTATION · 文本谱例/u);
-  assert.match(lesson, /<figure class="tablature"/u);
-  assert.match(lesson, /data-tablature-expand/u);
-  assert.match(lesson, /A Minor Pentatonic · Box 1/u);
-  assert.doesNotMatch(lesson, /language-tab/u);
+  assert.match(lesson07, /data-mobile-nav/u);
+  assert.match(lesson07, /data-lesson-completion/u);
+  assert.match(lesson07, /data-completion-toggle/u);
+  assert.match(lesson07, /guitar-tutorial:reading/u);
+  assert.match(lesson07, /TEXT NOTATION · 文本谱例/u);
+  assert.match(lesson07, /<figure class="tablature tab-diagram"/u);
+  assert.match(lesson07, /data-tablature-expand/u);
+  assert.match(lesson07, /A Minor Pentatonic · Box 1/u);
+
+  assert.match(lesson02, /<figure class="tablature tab-score"/u);
+  assert.match(lesson02, /data-tab-score=/u);
+  assert.match(lesson02, /data-tab-score-counts/u);
+  assert.match(lesson02, /四分音符读谱/u);
+  assert.match(lesson06, /Palm Muted Power Chord Riff/u);
+  assert.match(lesson06, /十六分发声与休止网格/u);
+  assert.match(lesson08b, /开放 E · Gallop/u);
+
+  for (const lesson of [lesson02, lesson06, lesson07, lesson08b]) {
+    assert.doesNotMatch(lesson, /language-tab/u);
+  }
 
   assert.match(privacy, /主题选择、上次阅读页面、阅读位置、路线偏好和手动完成记录/u);
 });
