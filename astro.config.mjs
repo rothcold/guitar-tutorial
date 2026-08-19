@@ -28,7 +28,7 @@ export default defineConfig({
   markdown: {
     syntaxHighlight: {
       type: "shiki",
-      excludeLangs: ["math", "tab"],
+      excludeLangs: ["math", "tab", "tab-diagram", "tab-score"],
     },
     processor: satteri({
       mdastPlugins: [lessonLinksPlugin],
