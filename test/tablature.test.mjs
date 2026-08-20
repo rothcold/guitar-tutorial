@@ -216,5 +216,5 @@ test("every lesson notation block satisfies its explicit contract", async () => 
   }
 
   assert.equal(diagramCount, 12);
-  assert.equal(scoreCount, 4);
+  assert.equal(scoreCount, 6);
 });

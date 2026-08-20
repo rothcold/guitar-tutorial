@@ -111,6 +111,7 @@ test("every HTML page has one H1, canonical metadata, and the indexing gate", as
 test("the Pencil v1 learning controls are present in the static output", async () => {
   const home = await readRoute("/");
   const lesson02 = await readRoute("/lessons/02");
+  const lesson04 = await readRoute("/lessons/04");
   const lesson06 = await readRoute("/lessons/06");
   const lesson07 = await readRoute("/lessons/07");
   const lesson08b = await readRoute("/lessons/08b");
@@ -135,11 +136,13 @@ test("the Pencil v1 learning controls are present in the static output", async (
   assert.match(lesson02, /data-tab-score=/u);
   assert.match(lesson02, /data-tab-score-counts/u);
   assert.match(lesson02, /四分音符读谱/u);
+  assert.match(lesson04, /<figure class="tablature tab-score"/u);
+  assert.match(lesson04, /D 大调卡农/u);
   assert.match(lesson06, /Palm Muted Power Chord Riff/u);
   assert.match(lesson06, /十六分发声与休止网格/u);
   assert.match(lesson08b, /开放 E · Gallop/u);
 
-  for (const lesson of [lesson02, lesson06, lesson07, lesson08b]) {
+  for (const lesson of [lesson02, lesson04, lesson06, lesson07, lesson08b]) {
     assert.doesNotMatch(lesson, /language-tab/u);
   }
 
