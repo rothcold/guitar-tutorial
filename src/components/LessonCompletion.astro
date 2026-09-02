@@ -17,15 +17,15 @@ const { id, title, path } = Astro.props;
   data-lesson-path={path}
 >
   <div>
-    <p class="lesson-completion__eyebrow">SELF CHECK · 不作为进阶门槛</p>
-    <h2 id="lesson-completion-title">完成本篇的自我检查了吗？</h2>
-    <p>确认节奏、放松、音准和干净度后，再由你决定是否标记完成。</p>
+    <p class="lesson-completion__eyebrow">CHECKPOINT / 完成标准</p>
+    <h2 id="lesson-completion-title">听得见的证据，才算完成。</h2>
+    <p>确认节奏、放松、音准和干净度后，再决定是否标记完成。记录只保存在这台设备上。</p>
   </div>
   <button type="button" aria-pressed="false" data-completion-toggle>
     <svg aria-hidden="true" viewBox="0 0 24 24">
       <path d="m5 12 4 4L19 6"></path>
     </svg>
-    <span data-completion-label>标记本篇完成</span>
+    <span data-completion-label>标记本篇已完成</span>
   </button>
 </section>
 
@@ -52,7 +52,7 @@ const { id, title, path } = Astro.props;
       const isComplete = readCompletedLessons().includes(lessonId);
       panel.classList.toggle("is-complete", isComplete);
       button.setAttribute("aria-pressed", String(isComplete));
-      label.textContent = isComplete ? "已标记完成" : "标记本篇完成";
+      label.textContent = isComplete ? "已标记完成" : "标记本篇已完成";
     };
 
     button.addEventListener("click", () => {

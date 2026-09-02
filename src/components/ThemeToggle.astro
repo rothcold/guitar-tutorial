@@ -15,7 +15,8 @@
     </svg>
     <span class="theme-toggle__thumb"></span>
   </span>
-  <span class="theme-toggle__label" data-theme-label>主题</span>
+  <span class="theme-toggle__label theme-toggle__label--state" data-theme-label>LIGHT</span>
+  <span class="theme-toggle__label theme-toggle__label--mobile">主题</span>
 </button>
 
 <script>
@@ -31,7 +32,7 @@
       toggle.setAttribute("aria-pressed", String(isDark));
       toggle.setAttribute("aria-label", isDark ? "切换到浅色主题" : "切换到深色主题");
       const label = toggle.querySelector<HTMLElement>("[data-theme-label]");
-      if (label) label.textContent = isDark ? "深色" : "浅色";
+      if (label) label.textContent = isDark ? "DARK" : "LIGHT";
     });
   }
 
