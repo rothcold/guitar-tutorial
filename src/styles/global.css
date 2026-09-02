@@ -1,20 +1,25 @@
 :root {
   color-scheme: light;
-  --color-canvas: #fafaf7;
-  --color-surface: #fafaf7;
-  --color-surface-raised: #fafaf7;
-  --color-panel: #30343a;
+  --mono-white: #fafaf7;
+  --mono-charcoal: #30343a;
+  --mono-signal: #c83232;
+  --mono-white-border: rgb(250 250 247 / 25%);
+  --mono-white-divider: rgb(250 250 247 / 28%);
+  --color-canvas: var(--mono-white);
+  --color-surface: var(--mono-white);
+  --color-surface-raised: var(--mono-white);
+  --color-panel: var(--mono-charcoal);
   --color-panel-muted: rgb(250 250 247 / 64%);
-  --color-text: #30343a;
-  --color-text-muted: rgb(48 52 58 / 64%);
+  --color-text: var(--mono-charcoal);
+  --color-text-muted: rgb(48 52 58 / 72%);
   --color-border: rgb(48 52 58 / 25%);
-  --color-border-strong: #30343a;
-  --color-accent: #c83232;
-  --color-accent-strong: #c83232;
+  --color-border-strong: var(--mono-charcoal);
+  --color-accent: var(--mono-signal);
+  --color-signal-foreground: var(--mono-signal);
   --color-accent-soft: rgb(200 50 50 / 8%);
-  --color-success: #c83232;
-  --color-focus: #c83232;
-  --color-on-panel: #fafaf7;
+  --color-success: var(--mono-signal);
+  --color-focus: var(--mono-signal);
+  --color-on-panel: var(--mono-white);
   --color-overlay: rgb(48 52 58 / 82%);
   --header-background: rgb(250 250 247 / 96%);
   --shadow-drawer: 0 0 0 1px var(--color-border-strong);
@@ -29,20 +34,20 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --color-canvas: #30343a;
-  --color-surface: #30343a;
-  --color-surface-raised: #30343a;
-  --color-panel: #30343a;
+  --color-canvas: var(--mono-charcoal);
+  --color-surface: var(--mono-charcoal);
+  --color-surface-raised: var(--mono-charcoal);
+  --color-panel: var(--mono-charcoal);
   --color-panel-muted: rgb(250 250 247 / 64%);
-  --color-text: #fafaf7;
+  --color-text: var(--mono-white);
   --color-text-muted: rgb(250 250 247 / 64%);
   --color-border: rgb(250 250 247 / 25%);
-  --color-border-strong: #fafaf7;
-  --color-accent: #c83232;
-  --color-accent-strong: #c83232;
+  --color-border-strong: var(--mono-white);
+  --color-accent: var(--mono-signal);
+  --color-signal-foreground: var(--mono-white);
   --color-accent-soft: rgb(200 50 50 / 20%);
-  --color-success: #c83232;
-  --color-focus: #c83232;
+  --color-success: var(--mono-signal);
+  --color-focus: var(--mono-signal);
   --color-overlay: rgb(48 52 58 / 92%);
   --header-background: rgb(48 52 58 / 96%);
   --shadow-drawer: 0 0 0 1px var(--color-border-strong);
@@ -81,13 +86,13 @@ button {
 }
 
 a {
-  color: var(--color-accent-strong);
+  color: var(--color-signal-foreground);
   text-decoration-thickness: 0.08em;
   text-underline-offset: 0.2em;
 }
 
 a:hover {
-  color: var(--color-accent);
+  color: var(--color-signal-foreground);
 }
 
 a:focus-visible,
@@ -188,7 +193,7 @@ svg {
 }
 
 .site-header__nav > a:hover {
-  color: var(--color-accent);
+  color: var(--color-signal-foreground);
 }
 
 .theme-toggle {
@@ -298,7 +303,7 @@ svg {
   gap: 0.5rem;
   align-items: center;
   margin: 0 0 0.8rem;
-  color: var(--color-accent);
+  color: var(--color-signal-foreground);
   font-family: var(--font-mono);
   font-size: 0.68rem;
   font-weight: 650;
@@ -320,7 +325,7 @@ svg {
   justify-content: center;
   min-height: 2.65rem;
   padding: 0.55rem 0.9rem;
-  border: 1px solid var(--color-accent-strong);
+  border: 1px solid var(--color-accent);
   border-radius: var(--radius-sm);
   font-size: 0.78rem;
   font-weight: 720;
@@ -329,7 +334,7 @@ svg {
 
 .primary-link {
   color: var(--color-on-panel);
-  background: var(--color-accent-strong);
+  background: var(--color-accent);
 }
 
 .primary-link:hover {
@@ -338,7 +343,7 @@ svg {
 }
 
 .secondary-link {
-  color: var(--color-accent-strong);
+  color: var(--color-signal-foreground);
   background: transparent;
 }
 
@@ -368,7 +373,7 @@ svg {
 
 .home-hero__descriptor {
   margin: 1.4rem 0 0;
-  color: var(--color-accent-strong);
+  color: var(--color-signal-foreground);
   font-size: clamp(1rem, 2vw, 1.24rem);
   font-weight: 680;
 }
@@ -444,7 +449,7 @@ svg {
 }
 
 .signal-visual__nodes circle {
-  fill: var(--color-accent-strong);
+  fill: var(--color-accent);
   stroke: var(--color-surface);
   stroke-width: 3;
 }
@@ -467,7 +472,7 @@ svg {
 }
 
 .continue-card__label {
-  color: var(--color-accent);
+  color: var(--color-signal-foreground);
   font-family: var(--font-mono);
   font-size: 0.62rem;
   letter-spacing: 0.07em;
@@ -489,7 +494,7 @@ svg {
   grid-row: 1 / 4;
   grid-column: 2;
   align-self: center;
-  color: var(--color-accent-strong);
+  color: var(--color-signal-foreground);
   font-size: 0.72rem;
   font-weight: 720;
 }
@@ -633,7 +638,7 @@ svg {
 }
 
 .route-node__meta span:first-child {
-  color: var(--color-accent);
+  color: var(--color-signal-foreground);
   font-weight: 700;
 }
 
@@ -649,7 +654,7 @@ svg {
 
 .route-node__arrow {
   align-self: center;
-  color: var(--color-accent);
+  color: var(--color-signal-foreground);
   font-family: var(--font-mono);
 }
 
@@ -702,7 +707,7 @@ svg {
 .practice-steps span {
   display: block;
   margin-bottom: 2.2rem;
-  color: var(--color-accent);
+  color: var(--color-signal-foreground);
   font-family: var(--font-mono);
   font-size: 0.68rem;
 }
@@ -837,7 +842,6 @@ svg {
   overflow: hidden;
   color: inherit;
   font-size: 0.54rem;
-  opacity: 0.72;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -939,7 +943,7 @@ svg {
 .prose h2::before {
   display: block;
   margin-bottom: 0.45rem;
-  color: var(--color-accent);
+  color: var(--color-signal-foreground);
   font-family: var(--font-mono);
   font-size: 0.58rem;
   font-weight: 600;
@@ -1102,7 +1106,7 @@ svg {
 .tablature__eyebrow {
   display: block;
   margin-bottom: 0.3rem;
-  color: var(--color-accent-strong);
+  color: var(--color-signal-foreground);
   font-family: var(--font-mono);
   font-size: 0.57rem;
   font-weight: 700;
@@ -1185,7 +1189,7 @@ svg {
 }
 
 .tab-score__counts-toggle[aria-pressed="true"] {
-  color: var(--color-accent-strong);
+  color: var(--color-signal-foreground);
   background: var(--color-accent-soft);
 }
 
@@ -1280,7 +1284,7 @@ svg {
 }
 
 .tablature__string-label {
-  color: var(--color-accent-strong);
+  color: var(--color-signal-foreground);
   font-weight: 750;
   text-align: center;
 }
@@ -1399,7 +1403,7 @@ svg {
 }
 
 .prose th {
-  color: var(--color-accent-strong);
+  color: var(--color-signal-foreground);
   background: var(--color-accent-soft);
   font-weight: 720;
 }
@@ -1435,12 +1439,12 @@ svg {
 }
 
 .page-toc a:hover {
-  color: var(--color-accent);
+  color: var(--color-signal-foreground);
   background: var(--color-accent-soft);
 }
 
 .page-toc a span:first-child {
-  color: var(--color-accent);
+  color: var(--color-signal-foreground);
   font-family: var(--font-mono);
 }
 
@@ -1470,7 +1474,7 @@ svg {
 
 .lesson-completion__eyebrow {
   margin: 0;
-  color: var(--color-accent);
+  color: var(--color-on-panel);
   font-family: var(--font-mono);
   font-size: 0.58rem;
   letter-spacing: 0.07em;
@@ -1499,7 +1503,7 @@ svg {
   border: 1px solid var(--color-accent);
   border-radius: var(--radius-sm);
   color: var(--color-on-panel);
-  background: var(--color-accent-strong);
+  background: var(--color-accent);
   font-size: 0.7rem;
   font-weight: 700;
   cursor: pointer;
@@ -1979,8 +1983,8 @@ svg {
 /* M00-M08 MONO editorial system */
 
 ::selection {
-  color: #fafaf7;
-  background: #c83232;
+  color: var(--mono-white);
+  background: var(--mono-signal);
 }
 
 .site-header {
@@ -2063,8 +2067,8 @@ svg {
 
 .site-footer {
   min-height: 7.5rem;
-  border-top: 1px solid #fafaf7;
-  background: #30343a;
+  border-top: 1px solid var(--mono-white);
+  background: var(--mono-charcoal);
 }
 
 .site-footer__brand span {
@@ -2086,9 +2090,9 @@ svg {
 
 .primary-link,
 .primary-link:hover {
-  border-color: #c83232;
-  color: #fafaf7;
-  background: #c83232;
+  border-color: var(--mono-signal);
+  color: var(--mono-white);
+  background: var(--mono-signal);
 }
 
 .secondary-link {
@@ -2150,7 +2154,7 @@ svg {
 }
 
 .home-hero__stats div:last-child dt {
-  color: var(--color-accent);
+  color: var(--color-signal-foreground);
 }
 
 .home-hero__visual {
@@ -2161,17 +2165,17 @@ svg {
 .signal-visual {
   overflow: hidden;
   border: 0;
-  color: #30343a;
-  background: #fafaf7;
+  color: var(--mono-charcoal);
+  background: var(--mono-white);
 }
 
 .signal-visual__field {
-  fill: #30343a;
+  fill: var(--mono-charcoal);
 }
 
 .signal-visual__strings path,
 .signal-visual__frets path {
-  stroke: #fafaf7;
+  stroke: var(--mono-white);
   stroke-width: 2;
 }
 
@@ -2180,23 +2184,23 @@ svg {
 }
 
 .signal-visual__nodes circle {
-  fill: #fafaf7;
-  stroke: #30343a;
+  fill: var(--mono-white);
+  stroke: var(--mono-charcoal);
   stroke-width: 2;
 }
 
 .signal-visual__dots circle {
-  fill: #30343a;
+  fill: var(--mono-charcoal);
 }
 
 .signal-visual__wave {
-  stroke: #c83232;
+  stroke: var(--mono-signal);
   stroke-width: 4;
 }
 
 .signal-visual__annotation {
   fill: none;
-  stroke: #c83232;
+  stroke: var(--mono-signal);
   stroke-dasharray: 8 6;
   stroke-width: 4;
 }
@@ -2313,8 +2317,8 @@ svg {
 .course-signal-track__label {
   padding: 0.55rem 0.75rem;
   border: 0;
-  color: #fafaf7;
-  background: #c83232;
+  color: var(--mono-white);
+  background: var(--mono-signal);
   font-weight: 700;
 }
 
@@ -2375,7 +2379,7 @@ svg {
 .sidebar-title,
 .desktop-sidebar--course > .sidebar-title {
   padding-inline: 0;
-  color: var(--color-accent);
+  color: var(--color-signal-foreground);
 }
 
 .course-list {
@@ -2412,7 +2416,7 @@ svg {
 }
 
 .course-link__id {
-  color: var(--color-accent);
+  color: var(--color-signal-foreground);
   font-size: 0.58rem;
   font-weight: 700;
 }
@@ -2452,7 +2456,7 @@ svg {
 }
 
 .lesson-context a {
-  color: var(--color-accent);
+  color: var(--color-signal-foreground);
 }
 
 .prose h1 {
@@ -2480,7 +2484,7 @@ svg {
 }
 
 .prose h2::before {
-  color: var(--color-accent);
+  color: var(--color-signal-foreground);
   content: "SECTION /";
 }
 
@@ -2538,8 +2542,8 @@ svg {
 }
 
 .prose th {
-  color: #fafaf7;
-  background: #30343a;
+  color: var(--mono-white);
+  background: var(--mono-charcoal);
 }
 
 .page-toc ol {
@@ -2559,9 +2563,9 @@ svg {
 .lesson-completion {
   margin-top: 4rem;
   padding: 1.75rem;
-  border: 2px solid #c83232;
-  color: #fafaf7;
-  background: #30343a;
+  border: 2px solid var(--mono-signal);
+  color: var(--mono-white);
+  background: var(--mono-charcoal);
 }
 
 .lesson-completion h2 {
@@ -2573,8 +2577,8 @@ svg {
 .lesson-completion.is-complete button {
   border: 0;
   border-radius: 0;
-  color: #fafaf7;
-  background: #c83232;
+  color: var(--mono-white);
+  background: var(--mono-signal);
 }
 
 .lesson-pagination {
@@ -2584,7 +2588,7 @@ svg {
 }
 
 .lesson-pagination p {
-  color: var(--color-accent);
+  color: var(--color-signal-foreground);
 }
 
 .simple-page h1,
@@ -2706,27 +2710,27 @@ svg {
 
   .mobile-lesson-navigation {
     height: var(--mobile-controls-height);
-    border-top: 3px solid #c83232;
-    background: #30343a;
+    border-top: 3px solid var(--mono-signal);
+    background: var(--mono-charcoal);
   }
 
   .mobile-lesson-navigation > details + details,
   .mobile-lesson-navigation > .theme-toggle {
-    border-left-color: rgb(250 250 247 / 28%);
+    border-left-color: var(--mono-white-divider);
   }
 
   .mobile-lesson-navigation summary,
   .mobile-lesson-navigation > .theme-toggle {
-    color: #fafaf7;
+    color: var(--mono-white);
   }
 
   .mobile-lesson-navigation details[open] summary {
-    color: #c83232;
-    background: #30343a;
+    color: var(--color-on-panel);
+    background: var(--mono-charcoal);
   }
 
   .mobile-lesson-navigation > .theme-toggle::before {
-    color: #fafaf7;
+    color: var(--mono-white);
   }
 
   .mobile-lesson-navigation .theme-toggle__label--state {
@@ -2745,17 +2749,17 @@ svg {
   }
 
   .mobile-drawer--left {
-    color: #fafaf7;
-    background: #30343a;
+    color: var(--mono-white);
+    background: var(--mono-charcoal);
   }
 
   .mobile-drawer--left .course-link,
   .mobile-drawer--left .course-link__title {
-    color: #fafaf7;
+    color: var(--mono-white);
   }
 
   .mobile-drawer--left .course-link {
-    border-color: rgb(250 250 247 / 25%);
+    border-color: var(--mono-white-border);
   }
 
   .site-footer {
@@ -2812,7 +2816,7 @@ svg {
     --color-border: #000;
     --color-border-strong: #000;
     --color-accent: #000;
-    --color-accent-strong: #000;
+    --color-signal-foreground: #000;
     --color-accent-soft: #fff;
     --color-on-panel: #000;
     --header-background: #fff;

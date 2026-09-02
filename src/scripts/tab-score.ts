@@ -15,7 +15,7 @@ interface Palette {
   muted: string;
   line: string;
   accent: string;
-  accentStrong: string;
+  signalForeground: string;
 }
 
 interface EventCoordinate {
@@ -37,7 +37,7 @@ function paletteFor(element: HTMLElement, printing: boolean): Palette {
       muted: "#4a4a4a",
       line: "#252525",
       accent: "#000000",
-      accentStrong: "#000000",
+      signalForeground: "#000000",
     };
   }
 
@@ -49,7 +49,7 @@ function paletteFor(element: HTMLElement, printing: boolean): Palette {
     muted: cssVariable(styles, "--color-text-muted"),
     line: cssVariable(styles, "--color-border-strong"),
     accent: cssVariable(styles, "--color-accent"),
-    accentStrong: cssVariable(styles, "--color-accent-strong"),
+    signalForeground: cssVariable(styles, "--color-signal-foreground"),
   };
 }
 
@@ -94,8 +94,8 @@ function drawPickMarker(
   modifiers: TabScoreModifier[],
   palette: Palette,
 ): void {
-  context.strokeStyle = palette.accentStrong;
-  context.fillStyle = palette.accentStrong;
+  context.strokeStyle = palette.signalForeground;
+  context.fillStyle = palette.signalForeground;
   context.lineWidth = 1.25;
 
   if (modifiers.includes("down")) {
@@ -446,7 +446,7 @@ function drawTies(
   previousEvent: TabScoreEvent | undefined,
   palette: Palette,
 ): void {
-  context.strokeStyle = palette.accentStrong;
+  context.strokeStyle = palette.signalForeground;
   context.lineWidth = 1.2;
 
   if (previousEvent?.modifiers.includes("tie") && coordinates[0]) {
@@ -561,7 +561,7 @@ function drawSystem(
     context.stroke();
 
     if (firstMeasureIndex === 0) {
-      context.fillStyle = palette.accentStrong;
+      context.fillStyle = palette.signalForeground;
       context.font = `700 10px ${mono}`;
       context.textAlign = "center";
       context.fillText(tuning[stringIndex] ?? String(stringIndex + 1), 14, y + 3);
