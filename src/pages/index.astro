@@ -42,20 +42,29 @@ const sharedAdvanced = lessons.filter((lesson) => lesson.data.order >= 10);
       </div>
 
       <div class="home-hero__visual">
-        <svg class="signal-visual" aria-hidden="true" viewBox="0 0 500 360">
-          <g class="signal-visual__strings">
-            <path d="M30 70H470"></path><path d="M30 108H470"></path>
-            <path d="M30 146H470"></path><path d="M30 184H470"></path>
-            <path d="M30 222H470"></path><path d="M30 260H470"></path>
+        <svg class="signal-visual" aria-hidden="true" viewBox="0 0 500 420">
+          <g class="signal-visual__fretboard" transform="translate(-38 18) rotate(-17 245 210)">
+            <path class="signal-visual__field" d="M90 30h330v390H90z"></path>
+            <g class="signal-visual__strings">
+              <path d="M112 30v390"></path><path d="M168 30v390"></path>
+              <path d="M224 30v390"></path><path d="M280 30v390"></path>
+              <path d="M336 30v390"></path><path d="M392 30v390"></path>
+            </g>
+            <g class="signal-visual__frets">
+              <path d="M90 96h330M90 164h330M90 236h330M90 312h330M90 392h330"></path>
+            </g>
+            <g class="signal-visual__nodes">
+              <circle cx="252" cy="132" r="13"></circle>
+              <circle cx="308" cy="274" r="13"></circle>
+            </g>
           </g>
-          <g class="signal-visual__frets">
-            <path d="M92 54v222M162 54v222M238 54v222M320 54v222M408 54v222"></path>
+          <g class="signal-visual__dots">
+            {Array.from({ length: 24 }, (_, index) => (
+              <circle cx={392 + (index % 4) * 18} cy={42 + Math.floor(index / 4) * 18} r="2"></circle>
+            ))}
           </g>
-          <path class="signal-visual__wave" d="M30 183c36 0 43-66 74-66s37 133 72 133 43-101 80-101 39 70 73 70 42-43 66-43 34 8 75 8"></path>
-          <g class="signal-visual__nodes">
-            <circle cx="30" cy="183" r="6"></circle><circle cx="176" cy="250" r="6"></circle>
-            <circle cx="329" cy="219" r="6"></circle><circle cx="470" cy="184" r="6"></circle>
-          </g>
+          <path class="signal-visual__wave" d="M0 260c24 0 25-26 46-26s20 42 42 42 22-31 44-31 25 19 48 19 21-57 43-57 21 105 44 105 23-75 44-75 24 40 47 40 21-25 44-25 21 13 42 13 28-8 56-8"></path>
+          <circle class="signal-visual__annotation" cx="268" cy="312" r="32"></circle>
         </svg>
 
         {

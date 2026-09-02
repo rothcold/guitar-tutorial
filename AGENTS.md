@@ -21,7 +21,7 @@
 - `07` 的下一篇为 `08A` 与 `08B`，两条路线都汇合到 `09`；`09` 的上一篇为 `08A` 与 `08B`。
 - `src/pages/lessons/[slug].astro` 从 frontmatter 生成静态教程路由；桌面页面使用课程路径、正文和本页目录三栏布局，移动端底部提供“课程”“本页”和“主题”控制，其中前两项打开独立抽屉。
 - 教程正文的一级标题来自 Markdown，页面布局不得重复输出标题；本页目录只收录正文中的二至四级标题。
-- `design/guitar-tutorial.pen` 是 Pencil v1 设计源；网站使用 K24ce 相思木色系，并只借鉴 DAW 的轨道、时间轴、信号流和状态指示，不制作伪旋钮、推子、传输条或霓虹效果。
+- `design/guitar-tutorial.pen` 中的 M00–M08 是当前设计源；网站使用 Neutral White `#FAFAF7`、Charcoal `#30343A` 与 Signal Red `#C83232` 的 MONO 编辑系统，并只借鉴 DAW 的轨道、时间轴、信号流和状态指示，不制作伪旋钮、推子、传输条或霓虹效果；Archive V1 仅用于对照。
 - 网站只使用 `src/styles/global.css` 中的原生 CSS token，不引入 Tailwind 或组件库；浅色与深色主题通过 `data-theme` 切换，首次访问跟随系统，手动选择保存在本地；宽表格和文本谱例必须保留横向滚动。
 - 主题、上次阅读页面、阅读位置、路线偏好和手动完成状态只保存在浏览器本地存储中，不提供账户、同步、连续打卡、完成百分比或内容锁定；对应说明维护在 `/privacy`。
 - fenced `tab-diagram` 用于音阶、和弦形状和指板图，保留六行 ASCII 契约与局部横向滚动；fenced `tab-score` 用于有明确时值的节奏六线谱，旧 fenced `tab` 必须构建失败。
